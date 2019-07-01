@@ -1,0 +1,38 @@
+﻿using Example.Data;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+
+namespace Example.Controllers
+{
+    public class CustomerController : Controller
+    {
+        private readonly AppDbContext _db;
+        private static Guid _customerId = Guid.Parse("ecf1f87a-ce11-471d-abae-735d23c91256");
+
+        public CustomerController(AppDbContext db)
+        {
+            _db = db;
+        }
+
+        [HttpGet("edit")]
+        public IActionResult Edit()
+        {
+            return View("Edit", _db.Customers.Find(_customerId));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(Customer customer)
+        {
+            if(ModelState.IsValid)
+            {
+                //Add or Update
+                _db.Customers.Update(customer);
+                await _db.SaveChangesAsync();
+                RedirectToAction("Index", "Home");
+            }
+
+            return View("Edit", customer);
+        }
+    }
+}

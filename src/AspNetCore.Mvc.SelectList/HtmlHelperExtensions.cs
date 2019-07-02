@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using AspNetCore.Mvc.SelectList.Internal;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -14,6 +15,39 @@ namespace AspNetCore.Mvc.SelectList
 {
     public static class HtmlHelperExtensions
     {
+
+        public static IEnumerable<ModelSelectListItem<TModel>> SelectListForModelType<TModel>(this IHtmlHelper htmlHelper, string selectListId = null) where TModel : class, new()
+        {
+            var newhtmlHelper = htmlHelper.For<TModel>();
+            return newhtmlHelper.SelectListForModelTypeAsync<TModel>(selectListId).GetAwaiter().GetResult();
+        }
+
+        public static async Task<IEnumerable<ModelSelectListItem<TModel>>> SelectListForModelTypeAsync<TModel>(this IHtmlHelper htmlHelper, string selectListId = null) where TModel : class, new()
+        {
+            var newhtmlHelper = htmlHelper.For<TModel>();
+            var result = await newhtmlHelper.SelectListAsync("", selectListId, false);
+
+            if (result != null)
+                return result.Cast<ModelSelectListItem>().Select(item => new ModelSelectListItem<TModel>(item));
+
+            return null;
+        }
+
+        public static IEnumerable<ModelSelectListItem> SelectListForModel(this IHtmlHelper htmlHelper, string selectListId = null)
+        {
+            return htmlHelper.SelectListForModelAsync(selectListId).GetAwaiter().GetResult();
+        }
+
+        public static async Task<IEnumerable<ModelSelectListItem>> SelectListForModelAsync(this IHtmlHelper htmlHelper, string selectListId = null)
+        {
+            var result = await htmlHelper.SelectListAsync("", selectListId, false);
+
+            if (result != null)
+                return result.Cast<ModelSelectListItem>();
+
+            return null;
+        }
+
         public static IEnumerable<SelectListItem> SelectListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string selectListId = null, bool selectedOnly = false)
         {
             var result = htmlHelper.SelectListForAsync(expression, selectListId, selectedOnly).GetAwaiter().GetResult();
@@ -27,7 +61,7 @@ namespace AspNetCore.Mvc.SelectList
             return (await GenerateSelectListAsync(htmlHelper, modelExpression.ModelExplorer, modelExpression.Name, selectListId, selectedOnly)) ?? GetSelectListItems(htmlHelper.ViewContext, modelExpression.Name);
         }
 
-        private static ModelExpression GetModelExpression<TModel,TResult>(IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression)
+        private static ModelExpression GetModelExpression<TModel, TResult>(IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression)
         {
             var modelExpressionProvider = new ModelExpressionProvider(htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>(),
                 htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<ExpressionTextCache>());
@@ -53,12 +87,20 @@ namespace AspNetCore.Mvc.SelectList
             if (!(modelExplorerToExtractAttribute.Metadata is DefaultModelMetadata defaultModelMetadata))
                 return null;
 
-            var selectListAttribute = defaultModelMetadata.Attributes.PropertyAttributes.OfType<SelectListAttribute>().Where(a => a.SelectListId == selectListId).FirstOrDefault();
+            SelectListAttribute selectListAttribute = null;
+            if (modelExplorerToExtractAttribute.Metadata.MetadataKind == ModelMetadataKind.Property)
+            {
+                selectListAttribute = defaultModelMetadata.Attributes.PropertyAttributes.OfType<SelectListAttribute>().Where(a => a.SelectListId == selectListId).FirstOrDefault();
+            }
+            else if (modelExplorerToExtractAttribute.Metadata.MetadataKind == ModelMetadataKind.Type)
+            {
+                selectListAttribute = defaultModelMetadata.Attributes.TypeAttributes.OfType<SelectListAttribute>().Where(a => a.SelectListId == selectListId).FirstOrDefault();
+            }
 
             if (selectListAttribute == null)
                 return null;
 
-            return await selectListAttribute.GetSelectListAsync(new SelectListContext(htmlHelper.ViewContext, modelExplorer, expression, selectedOnly));
+            return await selectListAttribute.GetSelectListAsync(new SelectListContext(htmlHelper, htmlHelper.ViewContext, modelExplorer, expression, selectedOnly));
         }
 
         private static IEnumerable<SelectListItem> GetSelectListItems(

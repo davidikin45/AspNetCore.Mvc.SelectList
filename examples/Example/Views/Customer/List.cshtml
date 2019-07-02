@@ -1,0 +1,5 @@
+﻿@foreach (var item in await Html.SelectListForModelTypeAsync<Customer>())
+{
+    @item.Html.DisplayFor(c => c.Name);
+    <br />
+}

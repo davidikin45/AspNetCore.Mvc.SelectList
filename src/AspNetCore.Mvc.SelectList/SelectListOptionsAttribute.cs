@@ -32,8 +32,10 @@ namespace AspNetCore.Mvc.SelectList
 
             for (int i = 0; i < _text.Length; i++)
             {
-                results.Add(new SelectListItem()
+                results.Add(new ModelSelectListItem()
                 {
+                    Model = _values[i],
+                    Html = Internal.HtmlHelperExtensions.For(context.Html, (dynamic)_values[i]),
                     Text = _text[i].ToString(),
                     Value = _values[i].ToString()
                 });

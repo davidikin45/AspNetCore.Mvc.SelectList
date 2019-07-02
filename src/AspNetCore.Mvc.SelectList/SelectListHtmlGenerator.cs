@@ -128,7 +128,7 @@ namespace AspNetCore.Mvc.SelectList
 
                 if (selectListAttribute != null)
                 {
-                    var selectListItems = selectListAttribute.GetSelectListAsync(new SelectListContext(viewContext, modelExplorer, expression, currentValues, false)).GetAwaiter().GetResult();
+                    var selectListItems = selectListAttribute.GetSelectListAsync(new SelectListContext(null, viewContext, modelExplorer, expression, currentValues, false)).GetAwaiter().GetResult();
 
                     return selectListItems;
                 }

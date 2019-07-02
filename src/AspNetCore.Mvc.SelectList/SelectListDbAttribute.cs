@@ -41,6 +41,9 @@ namespace AspNetCore.Mvc.SelectList
         public string OrderByProperty { get; set; } = "Id";
         public string OrderByType { get; set; } = "desc";
 
+        public int Skip { get; set; } = 0;
+        public int Take { get; set; } = 1000;
+
         public string RawSql { get; set; } = "";
         public object[] RawSqlParameters { get; set; }
 
@@ -82,12 +85,25 @@ namespace AspNetCore.Mvc.SelectList
                 if (context.ModelExplorer.Metadata is DefaultModelMetadata defaultModelMetadata)
                 {
                     //Loop over where clauses
-                    var whereClauseAttributes = defaultModelMetadata.Attributes.PropertyAttributes.OfType<SelectListDbWhereAttribute>().ToList();
 
-                    foreach (var where in whereClauseAttributes)
+
+                    IEnumerable<SelectListDbWhereAttribute> whereClauseAttributes = null;
+                    if(defaultModelMetadata.MetadataKind == ModelMetadataKind.Property)
                     {
-                        var whereClause = LamdaHelper.SearchForEntityByProperty(ModelType, where.PropertyName, where.Values);
-                        query = (IQueryable)_dbContextWhereClauseMethod.MakeGenericMethod(ModelType).Invoke(null, new object[] { query, whereClause });
+                        whereClauseAttributes = defaultModelMetadata.Attributes.PropertyAttributes.OfType<SelectListDbWhereAttribute>().Where(a => a.SelectListId == this.SelectListId);
+                    }
+                    else if (defaultModelMetadata.MetadataKind == ModelMetadataKind.Type)
+                    {
+                        whereClauseAttributes = defaultModelMetadata.Attributes.TypeAttributes.OfType<SelectListDbWhereAttribute>().Where(a => a.SelectListId == this.SelectListId);
+                    }
+
+                    if(whereClauseAttributes != null)
+                    {
+                        foreach (var where in whereClauseAttributes)
+                        {
+                            var whereClause = LamdaHelper.SearchForEntityByProperty(ModelType, where.PropertyName, where.Values);
+                            query = (IQueryable)_dbContextWhereClauseMethod.MakeGenericMethod(ModelType).Invoke(null, new object[] { query, whereClause });
+                        }
                     }
                 }
             }
@@ -105,14 +121,22 @@ namespace AspNetCore.Mvc.SelectList
                 }
             }
 
-            dynamic dynamicQuery = query;
-            IEnumerable results = (IEnumerable)(await EntityFrameworkQueryableExtensions.ToListAsync(dynamicQuery, CancellationToken.None));
+            //Skip
+            query = (IQueryable)Queryable.Skip((dynamic)query, Skip);
+
+            //Take
+            query = (IQueryable)Queryable.Take((dynamic)query, Take);
+
+            //Get Results
+            IEnumerable results = (IEnumerable)(await EntityFrameworkQueryableExtensions.ToListAsync((dynamic)query, CancellationToken.None));
 
             var items = new List<SelectListItem>();
             foreach (var item in results)
             {
-                var selectListItem = new SelectListItem()
+                var selectListItem = new ModelSelectListItem()
                 {
+                    Model = item,
+                    Html = Internal.HtmlHelperExtensions.For(context.Html, (dynamic)item),
                     Text = context.Display(item, DataTextFieldExpression),
                     Value = item.GetPropValue(DataValueField) != null ? item.GetPropValue(DataValueField).ToString() : ""
                 };
@@ -124,11 +148,13 @@ namespace AspNetCore.Mvc.SelectList
         }
     }
 
-    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public class SelectListDbWhereAttribute : Attribute
     {
         public string PropertyName { get; set; }
         public object[] Values { get; set; }
+
+        public string SelectListId { get; set; }
 
         public SelectListDbWhereAttribute(string propertyName, params object[] values)
         {

@@ -24,8 +24,10 @@ namespace AspNetCore.Mvc.SelectList
             {
                 var itemObject = (object)item;
 
-                results.Add(new SelectListItem()
+                results.Add(new ModelSelectListItem()
                 {
+                    Model = item,
+                    Html = Internal.HtmlHelperExtensions.For(context.Html, (dynamic)item),
                     Text = context.Display(item, DataTextFieldExpression),
                     Value = item.GetPropValue(DataValueField) != null ? item.GetPropValue(DataValueField).ToString() : "",
                     Selected = true

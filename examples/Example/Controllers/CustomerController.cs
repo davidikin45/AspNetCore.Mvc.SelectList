@@ -15,10 +15,16 @@ namespace Example.Controllers
             _db = db;
         }
 
-        [HttpGet("edit")]
+        [HttpGet]
         public IActionResult Edit()
         {
             return View("Edit", _db.Customers.Find(_customerId));
+        }
+
+        [HttpGet]
+        public IActionResult List()
+        {
+            return View();
         }
 
         [HttpPost]

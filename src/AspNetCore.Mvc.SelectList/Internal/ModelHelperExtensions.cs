@@ -79,12 +79,6 @@ namespace AspNetCore.Mvc.SelectList.Internal
             return newHtml.Display(propertyName);
         }
 
-        public static IHtmlContent Display(this IHtmlHelper html, dynamic model, string propertyName)
-        {
-            IHtmlHelper<dynamic> newHtml = HtmlHelperExtensions.For(html, model);
-            return newHtml.Display(propertyName);
-        }
-
         //Values
         public static HtmlString DisplayTextSimple(this IHtmlHelper html, string propertyName)
         {

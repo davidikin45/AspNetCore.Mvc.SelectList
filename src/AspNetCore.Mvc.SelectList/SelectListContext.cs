@@ -33,13 +33,13 @@ namespace AspNetCore.Mvc.SelectList
 
         public bool SelectedOnly { get; }
 
-        public SelectListContext(ViewContext viewContext, ModelExplorer modelExplorer, string expression, bool selectedOnly)
-        :this(viewContext, modelExplorer, expression, GetCurrentValues(viewContext, modelExplorer, expression), selectedOnly)
+        public SelectListContext(IHtmlHelper html, ViewContext viewContext, ModelExplorer modelExplorer, string expression, bool selectedOnly)
+        :this(html, viewContext, modelExplorer, expression, GetCurrentValues(viewContext, modelExplorer, expression), selectedOnly)
         {
 
         }
 
-         public SelectListContext(ViewContext viewContext, ModelExplorer modelExplorer, string expression, ICollection<string> currentValues, bool selectedOnly)
+         public SelectListContext(IHtmlHelper html, ViewContext viewContext, ModelExplorer modelExplorer, string expression, ICollection<string> currentValues, bool selectedOnly)
         {
             if (viewContext == null)
             {
@@ -49,7 +49,7 @@ namespace AspNetCore.Mvc.SelectList
             CurrentValues = currentValues;
             //IdFor
             ModelExplorer = modelExplorer ?? ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>()); ;
-            Html = CreateHtmlHelper(viewContext);
+            Html = html ?? CreateHtmlHelper(viewContext);
             SelectedOnly = selectedOnly;
         }
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Text.Encodings.Web;
 
 namespace AspNetCore.Mvc.SelectList.Internal
@@ -18,11 +19,6 @@ namespace AspNetCore.Mvc.SelectList.Internal
         public static IHtmlHelper<TModel> For<TModel>(this IHtmlHelper helper, TModel model)
         {
             return For<TModel>(helper.ViewContext, helper.ViewData, model);
-        }
-
-        public static IHtmlHelper<dynamic> For(this IHtmlHelper helper, dynamic model)
-        {
-            return For(helper.ViewContext, helper.ViewData, model);
         }
 
         public static IHtmlHelper<TModel> For<TModel>(ViewContext viewContext, ViewDataDictionary viewData) where TModel : class, new()

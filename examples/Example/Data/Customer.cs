@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Example.Data
 {
+    [SelectListDb(typeof(AppDbContext), typeof(Customer), OrderByProperty = nameof(Customer.Id))]
     public class Customer
     {
         [HiddenInput]

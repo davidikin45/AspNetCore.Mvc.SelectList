@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AspNetCore.Mvc.SelectList
 {
-    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public abstract class SelectListAttribute : Attribute
     {
         public string SelectListId { get; set; }

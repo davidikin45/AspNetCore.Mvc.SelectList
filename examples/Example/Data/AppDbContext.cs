@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace Example.Data
 {
@@ -8,7 +9,7 @@ namespace Example.Data
         public AppDbContext(DbContextOptions<AppDbContext> options)
            : base(options)
         {
-            
+           
         }
 
         public DbSet<Customer> Customers { get; set; }
@@ -41,8 +42,18 @@ namespace Example.Data
                 new Customer
                 {
                     Id = Guid.Parse("ecf1f87a-ce11-471d-abae-735d23c91256"),
-                    Name = "Test User"
-                }
+                    Name = "User 1"
+                },
+                 new Customer
+                 {
+                     Id = Guid.Parse("ecf1f87a-ce11-471d-abae-735d23c91257"),
+                     Name = "User 2"
+                 },
+                 new Customer
+                 {
+                     Id = Guid.Parse("ecf1f87a-ce11-471d-abae-735d23c91258"),
+                     Name = "User 3"
+                 }
             );
         }
     }

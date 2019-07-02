@@ -23,6 +23,7 @@ services.AddSelectListAttributes();
 ```
 
 ```
+[SelectListDb(typeof(AppDbContext), typeof(Customer), OrderByProperty = nameof(Customer.Id))]
 public class Customer
 {
 	[HiddenInput]
@@ -94,6 +95,14 @@ public class Customer
 	<br />
 	<button type="submit">Add/Update</button>
 </form>
+```
+
+```
+@foreach (var item in await Html.SelectListForModelTypeAsync<Customer>())
+{
+    @item.Html.DisplayFor(c => c.Name);
+    <br />
+}
 ```
 
 ## Attributes

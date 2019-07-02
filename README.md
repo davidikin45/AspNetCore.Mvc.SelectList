@@ -21,7 +21,7 @@ PM> Install-Package AspNetCore.Mvc.SelectList
 ```
 services.AddSelectListAttributes();
 ```
-
+#### Model Example
 ```
 [SelectListDb(typeof(AppDbContext), typeof(Customer), OrderByProperty = nameof(Customer.Id))]
 public class Customer
@@ -63,11 +63,11 @@ public class Customer
 	public string File2 { get; set; }
 	
 	[Display(Name = "Status")]
-    [SelectListDb(typeof(AppDbContext), typeof(Status), "{" + nameof(Status.Description) + "} - {" + nameof(Status.Id) + "}", OrderByType = "asc")]
-    public int StatusId { get; set; }
+	[SelectListDb(typeof(AppDbContext), typeof(Status), "{" + nameof(Status.Description) + "} - {" + nameof(Status.Id) + "}", OrderByType = "asc")]
+	public int StatusId { get; set; }
 }
 ```
-
+#### View Example
 ```
 @model Customer
 
@@ -98,12 +98,12 @@ public class Customer
 	<select asp-for="File2"></select>
 	<br />
 	<label asp-for="StatusId"></label>
-    <select asp-for="StatusId"></select>
-    <br />
+	<select asp-for="StatusId"></select>
+	<br />
 	<button type="submit">Add/Update</button>
 </form>
 ```
-
+#### Get List
 ```
 @foreach (var item in await Html.SelectListForModelTypeAsync<Customer>())
 {
@@ -111,22 +111,21 @@ public class Customer
 	<br />
 }
 ```
-
+#### Filter by Id
 ```
 {
 	var item = await Html.SelectListForModelTypeAsync<Customer>(new object[]{"ecf1f87a-ce11-471d-abae-735d23c91256"}).FirstOrDefault();
 	@item.Html.DisplayFor(c => c.Name);
 }
 ```
-
+#### Override Attribute Select List
 ```
 [HttpGet]
 public IActionResult Edit()
 {
-	//Override attribute select list
 	ViewBag.File = new List<SelectListItem>() { };
 
-    return View("Edit", _db.Customers.Find(_customerId));
+	return View("Edit", _db.Customers.Find(_customerId));
 }
 ```
 

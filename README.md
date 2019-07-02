@@ -61,6 +61,10 @@ public class Customer
 	[Display(Name = "File2")]
 	[SelectListFile("wwwroot")]
 	public string File2 { get; set; }
+	
+	[Display(Name = "Status")]
+	[SelectListDb(typeof(AppDbContext), typeof(Status), "{" + nameof(Status.Description) + "} - {" + nameof(Status.Id) + "}", OrderByType = "asc")]
+	public int StatusId { get; set; }
 }
 ```
 
@@ -92,6 +96,9 @@ public class Customer
 	<br />
 	<label asp-for="File2"></label>
 	<select asp-for="File2"></select>
+	<br />
+	<label asp-for="StatusId"></label>
+	<select asp-for="StatusId"></select>
 	<br />
 	<button type="submit">Add/Update</button>
 </form>

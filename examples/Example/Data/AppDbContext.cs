@@ -55,6 +55,24 @@ namespace Example.Data
                      Name = "User 3"
                  }
             );
+
+            modelBuilder.Entity<Status>().HasData(
+                new Status
+                {
+                    Id = 1,
+                    Description = "Unverified"
+                },
+                 new Status
+                 {
+                     Id = 2,
+                     Description = "Partial"
+                 },
+                  new Status
+                  {
+                      Id = 3,
+                      Description = "Complete"
+                  }
+            );
         }
     }
 }

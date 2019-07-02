@@ -43,5 +43,9 @@ namespace Example.Data
         [Display(Name = "File2")]
         [SelectListFile("wwwroot")]
         public string File2 { get; set; }
+
+        [Display(Name = "Status")]
+        [SelectListDb(typeof(AppDbContext), typeof(Status), "{" + nameof(Status.Description) + "} - {" + nameof(Status.Id) + "}", OrderByType = "asc")]
+        public int StatusId { get; set; }
     }
 }

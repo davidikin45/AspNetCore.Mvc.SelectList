@@ -100,15 +100,15 @@ public class Customer
 ```
 @foreach (var item in await Html.SelectListForModelTypeAsync<Customer>())
 {
-    @item.Html.DisplayFor(c => c.Name);
-    <br />
+	@item.Html.DisplayFor(c => c.Name);
+	<br />
 }
 ```
 
 ```
 {
 	var item = await Html.SelectListForModelTypeAsync<Customer>(new object[]{"ecf1f87a-ce11-471d-abae-735d23c91256"}).FirstOrDefault();
-    @item.Html.DisplayFor(c => c.Name);
+	@item.Html.DisplayFor(c => c.Name);
 }
 ```
 

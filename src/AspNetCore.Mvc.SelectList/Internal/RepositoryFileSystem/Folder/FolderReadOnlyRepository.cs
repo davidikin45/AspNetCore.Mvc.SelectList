@@ -19,13 +19,13 @@ namespace AspNetCore.Mvc.SelectList.Internal.RepositoryFileSystem.Folder
         public FolderReadOnlyRepository(string physicalPath, Boolean includeSubDirectories, string searchPattern = "*",  CancellationToken cancellationToken = default(CancellationToken), Boolean atLeastOneFile = true)
         {
             if (!physicalPath.EndsWith("\\"))
-                {
+            {
                 physicalPath = physicalPath + "\\";
             }
 
             if (!System.IO.Directory.Exists(physicalPath))
             {
-                throw new Exception("Path: " + physicalPath + " does not exist");
+                throw new Exception("Path: " + physicalPath + " does not exist. Possibly need to prefix path string with @ symbol.");
             }
                 this._physicalPath = physicalPath;
             

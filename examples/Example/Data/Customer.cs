@@ -38,5 +38,9 @@ namespace Example.Data
         [Display(Name = "Folder")]
         [SelectListFolder("~/files/")]
         public string Folder { get; set; }
+
+        [Display(Name = "File2")]
+        [SelectListFile("wwwroot")]
+        public string File2 { get; set; }
     }
 }

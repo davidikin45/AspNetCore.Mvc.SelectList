@@ -14,7 +14,7 @@ namespace AspNetCore.Mvc.SelectList
     public class SelectListFileAttribute : SelectListAttribute
     {
 
-        public SelectListFileAttribute(string path, string dataTextFieldExpression = nameof(FileInfo.Name))
+        public SelectListFileAttribute(string path, string dataTextFieldExpression = nameof(FileInfo.FullName))
         {
             Path = path;
             DataTextFieldExpression = dataTextFieldExpression;
@@ -23,22 +23,33 @@ namespace AspNetCore.Mvc.SelectList
         private static IFileSystemGenericRepositoryFactory _fileSystemGenericRepositoryFactory = new FileSystemGenericRepositoryFactory();
         public string Path { get; set; }
 
-        public string DataTextFieldExpression { get; set; } = nameof(FileInfo.Name);
+        public string DataTextFieldExpression { get; set; } = nameof(FileInfo.FullName);
         public string OrderByProperty { get; set; } = nameof(FileInfo.LastWriteTime);
         public string OrderByType { get; set; } = "desc";
 
         public bool IncludeSubDirectories { get; set; } = true;
         public string SearchPattern { get; set; } = "*";
-        public bool PhysicalPathAsValue { get; set; }
+
+        public bool RemoveSearchPathFromText { get; set; } = true;
+        public bool RemoveSearchPathFromValue { get; set; } 
 
         protected async override Task<IEnumerable<SelectListItem>> GetSelectListItemsAsync(SelectListContext context)
         {
             var dataValueField = nameof(FileInfo.FullName);
 
             var hostingEnvironment = context.HttpContext.RequestServices.GetRequiredService<IHostingEnvironment>();
-            var mappedPath = hostingEnvironment.MapWwwPath(Path);
+            var mappedWwwPath = hostingEnvironment.MapWwwPath(Path);
+            var mappedContentPath = hostingEnvironment.MapContentPath(Path);
 
-            var repository = _fileSystemGenericRepositoryFactory.CreateFileRepositoryReadOnly(default(CancellationToken), mappedPath, IncludeSubDirectories, SearchPattern);
+            var searchPath = Path;
+            if (mappedWwwPath != mappedContentPath)
+            {
+                searchPath = mappedContentPath;
+                if (Directory.Exists(mappedWwwPath))
+                    searchPath = mappedWwwPath;
+            }
+
+            var repository = _fileSystemGenericRepositoryFactory.CreateFileRepositoryReadOnly(default(CancellationToken), searchPath, IncludeSubDirectories, SearchPattern);
             var data = await repository.GetAllAsync(LamdaHelper.GetOrderByFunc<FileInfo>(OrderByProperty, OrderByType), null, null);
 
             var results = new List<SelectListItem>();
@@ -46,8 +57,8 @@ namespace AspNetCore.Mvc.SelectList
             {
                 results.Add(new SelectListItem()
                 {
-                    Text = context.Display(item, DataTextFieldExpression),
-                    Value = item.GetPropValue(dataValueField) != null ? (PhysicalPathAsValue ? item.GetPropValue(dataValueField).ToString() : item.GetPropValue(dataValueField).ToString().Replace(mappedPath, "")) : ""
+                    Text = RemoveSearchPathFromText ? context.Display(item, DataTextFieldExpression).Replace(searchPath, "") : context.Display(item, DataTextFieldExpression),
+                    Value = item.GetPropValue(dataValueField) != null ? (RemoveSearchPathFromValue ? item.GetPropValue(dataValueField).ToString().Replace(searchPath, "") : item.GetPropValue(dataValueField).ToString()) : ""
                 });
             }
 

@@ -56,6 +56,10 @@ public class Customer
 	[Display(Name = "Folder")]
 	[SelectListFolder("~/files/")]
 	public string Folder { get; set; }
+	
+	[Display(Name = "File2")]
+	[SelectListFile("wwwroot")]
+	public string File2 { get; set; }
 }
 ```
 
@@ -85,20 +89,23 @@ public class Customer
 	<label asp-for="Folder"></label>
 	<select asp-for="Folder"></select>
 	<br />
+	<label asp-for="File2"></label>
+	<select asp-for="File2"></select>
+	<br />
 	<button type="submit">Add/Update</button>
 </form>
 ```
 
 ## Attributes
 
-| Attribute                  | Description                                                  |
-|:---------------------------|:-------------------------------------------------------------|
-| SelectListAttribute        | Base class                                                   |
-| SelectListOptionsAttribute | Specify Options                                              |
-| SelectListDbAttribute      | Specify DbContext and ModelType                              |
-| SelectListDbWhereAttribute | Specify DbContext Where Clause                               |
-| SelectListFileAttribute    | Specify physical or Web Root virtual path such as "~/files/" |
-| SelectListFolderAttribute  | Specify physical or Web Root virtual path such as "~/files/" |
+| Attribute                  | Description                                                                        |
+|:---------------------------|:-----------------------------------------------------------------------------------|
+| SelectListAttribute        | Base class                                                                         |
+| SelectListOptionsAttribute | Specify Options                                                                    |
+| SelectListDbAttribute      | Specify DbContext and ModelType                                                    |
+| SelectListDbWhereAttribute | Specify DbContext Where Clause                                                     |
+| SelectListFileAttribute    | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
+| SelectListFolderAttribute  | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
 
 ## Authors
 

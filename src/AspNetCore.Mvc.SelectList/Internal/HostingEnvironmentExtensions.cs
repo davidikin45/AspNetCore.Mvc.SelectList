@@ -27,6 +27,11 @@ namespace AspNetCore.Mvc.SelectList.Internal
                     result = result.Substring(1);
                 }
                 result = Path.Combine(contentRoot, result.Replace('/', '\\'));
+
+                if (!result.EndsWith("\\"))
+                {
+                    result = result + "\\";
+                }
             }
 
             return result;
@@ -60,6 +65,11 @@ namespace AspNetCore.Mvc.SelectList.Internal
                     result = result.Substring(1);
                 }
                 result = Path.Combine(wwwroot, result.Replace('/', '\\'));
+
+                if (!result.EndsWith("\\"))
+                {
+                    result = result + "\\";
+                }
             }
 
             return result;

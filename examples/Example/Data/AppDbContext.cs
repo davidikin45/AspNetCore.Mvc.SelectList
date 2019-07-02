@@ -7,7 +7,9 @@ namespace Example.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
            : base(options)
-        { }
+        {
+            
+        }
 
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }

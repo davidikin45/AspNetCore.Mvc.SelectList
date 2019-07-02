@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,6 +22,15 @@ namespace AspNetCore.Mvc.SelectList
             DataTextFieldExpression = dataTextFieldExpression;
         }
 
+        public SelectListDbAttribute(Type dbContextType, Type modelType, string rawSql, object[] parameters, string dataTextFieldExpression = "Id")
+        {
+            DbContextType = dbContextType;
+            ModelType = modelType;
+            RawSql = rawSql;
+            RawSqlParameters = parameters;
+            DataTextFieldExpression = dataTextFieldExpression;
+        }
+
         public Type DbContextType { get; set; }
         public Type ModelType { get; set; }
 
@@ -31,47 +41,67 @@ namespace AspNetCore.Mvc.SelectList
         public string OrderByProperty { get; set; } = "Id";
         public string OrderByType { get; set; } = "desc";
 
+        public string RawSql { get; set; } = "";
+        public object[] RawSqlParameters { get; set; }
+
+        public bool EnableChangeTracking { get; set; } = false;
+
+        private static MethodInfo _dbContextSetMethod = typeof(DbContext).GetMethod("Set");
+        private static MethodInfo _dbContextWhereClauseMethod = typeof(LamdaHelper).GetMethod(nameof(LamdaHelper.Where));
+        private static MethodInfo _dbContextOrderByMethod = typeof(DbContextHelper).GetMethod(nameof(DbContextHelper.QueryableOrderBy));
+
         protected override async Task<IEnumerable<SelectListItem>> GetSelectListItemsAsync(SelectListContext context)
         {
+            //Get DbContext from DI container
             DbContext db = (DbContext)context.HttpContext.RequestServices.GetService(DbContextType);
-
+              
             if (db == null)
                 throw new Exception("Database not found");
 
-            var pi = ModelType.GetProperty(OrderByProperty);
+            //Get DbSet as IQueryable
+            IQueryable query = (IQueryable)_dbContextSetMethod.MakeGenericMethod(ModelType).Invoke(db, null);
 
-            Type iQueryableType = typeof(IQueryable<>).MakeGenericType(new[] { ModelType });
+            if (!string.IsNullOrEmpty(RawSql))
+            {
+                query = (IQueryable)RelationalQueryableExtensions.FromSql((dynamic)query, RawSql, RawSqlParameters);
+            }
 
-            IQueryable query = (IQueryable)db.GetType().GetMethod("Set").MakeGenericMethod(ModelType).Invoke(db, null);
+            if (!EnableChangeTracking)
+            {
+                query = (IQueryable)EntityFrameworkQueryableExtensions.AsNoTracking((dynamic)query);
+            }
 
             if (context.SelectedOnly)
             {
-                var whereClause = DbContextHelper.SearchForEntityByValues(ModelType, DataValueField, context.SelectedValues.Cast<Object>());
-                query = (IQueryable)typeof(LamdaHelper).GetMethod(nameof(LamdaHelper.Where)).MakeGenericMethod(ModelType).Invoke(null, new object[] { query, whereClause });
+                //Select by Id
+                var whereClause = DbContextHelper.SearchForEntityByValues(ModelType, DataValueField, context.CurrentValues);
+                query = (IQueryable)_dbContextWhereClauseMethod.MakeGenericMethod(ModelType).Invoke(null, new object[] { query, whereClause });
             }
             else
             {
-                if (!(context.ModelExplorer.Metadata is DefaultModelMetadata defaultModelMetadata))
-                    throw new Exception("Expected DefaultModelMetadata");
-
-                var whereClauseAttributes = defaultModelMetadata.Attributes.PropertyAttributes.OfType<DbContextSelectListWhereAttribute>().ToList();
-
-                foreach (var where in whereClauseAttributes)
+                if (context.ModelExplorer.Metadata is DefaultModelMetadata defaultModelMetadata)
                 {
-                    var whereClause = LamdaHelper.SearchForEntityByProperty(ModelType, where.PropertyName, where.Values);
-                    query = (IQueryable)typeof(LamdaHelper).GetMethod(nameof(LamdaHelper.Where)).MakeGenericMethod(ModelType).Invoke(null, new object[] { query, whereClause });
+                    //Loop over where clauses
+                    var whereClauseAttributes = defaultModelMetadata.Attributes.PropertyAttributes.OfType<SelectListDbWhereAttribute>().ToList();
+
+                    foreach (var where in whereClauseAttributes)
+                    {
+                        var whereClause = LamdaHelper.SearchForEntityByProperty(ModelType, where.PropertyName, where.Values);
+                        query = (IQueryable)_dbContextWhereClauseMethod.MakeGenericMethod(ModelType).Invoke(null, new object[] { query, whereClause });
+                    }
                 }
+            }
 
-                if (!string.IsNullOrWhiteSpace(OrderByProperty))
+            //Order By
+            if (!string.IsNullOrWhiteSpace(OrderByProperty))
+            {
+                if (OrderByType == "asc")
                 {
-                    if (OrderByType == "asc")
-                    {
-                        query = (IQueryable)typeof(DbContextHelper).GetMethod(nameof(DbContextHelper.QueryableOrderBy)).MakeGenericMethod(ModelType).Invoke(null, new object[] { query, OrderByProperty, true });
-                    }
-                    else
-                    {
-                        query = (IQueryable)typeof(DbContextHelper).GetMethod(nameof(DbContextHelper.QueryableOrderBy)).MakeGenericMethod(ModelType).Invoke(null, new object[] { query, OrderByProperty, false });
-                    }
+                    query = (IQueryable)_dbContextOrderByMethod.MakeGenericMethod(ModelType).Invoke(null, new object[] { query, OrderByProperty, true });
+                }
+                else
+                {
+                    query = (IQueryable)_dbContextOrderByMethod.MakeGenericMethod(ModelType).Invoke(null, new object[] { query, OrderByProperty, false });
                 }
             }
 
@@ -94,9 +124,16 @@ namespace AspNetCore.Mvc.SelectList
         }
     }
 
-    public class DbContextSelectListWhereAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = true)]
+    public class SelectListDbWhereAttribute : Attribute
     {
         public string PropertyName { get; set; }
-        public IEnumerable<Object> Values { get; set; }
+        public object[] Values { get; set; }
+
+        public SelectListDbWhereAttribute(string propertyName, params object[] values)
+        {
+            PropertyName = propertyName;
+            Values = values;
+        }
     }
 }

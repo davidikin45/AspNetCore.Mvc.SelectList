@@ -92,10 +92,6 @@ namespace AspNetCore.Mvc.SelectList.Internal.RepositoryFileSystem.File
         Task<bool> GetExistsAsync(Expression<Func<FileInfo, bool>> filter = null)
            ;
 
-        FileInfo GetMain()
-         ;
-
-        Task<FileInfo> GetMainAsync();
 
     }
 }

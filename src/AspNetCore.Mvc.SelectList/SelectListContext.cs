@@ -27,8 +27,6 @@ namespace AspNetCore.Mvc.SelectList
 
         public ICollection<string> CurrentValues { get; }
 
-        public List<dynamic> SelectedValues { get; private set; }
-
         public ModelExplorer ModelExplorer { get; }
 
         public ModelMetadata Metadata { get { return ModelExplorer.Metadata; } }

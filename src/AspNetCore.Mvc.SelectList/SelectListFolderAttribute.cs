@@ -30,6 +30,8 @@ namespace AspNetCore.Mvc.SelectList
         public string SearchPattern { get; set; } = "*";
         public bool PhysicalPathAsValue { get; set; }
 
+        public bool AtLeastOneFile { get; set; } = true;
+
         protected async override Task<IEnumerable<SelectListItem>> GetSelectListItemsAsync(SelectListContext context)
         {
             var dataValueField = nameof(DirectoryInfo.FullName);
@@ -37,7 +39,7 @@ namespace AspNetCore.Mvc.SelectList
             var hostingEnvironment = context.HttpContext.RequestServices.GetRequiredService<IHostingEnvironment>();
             var mappedPath = hostingEnvironment.MapWwwPath(Path);
 
-            var repository = _fileSystemGenericRepositoryFactory.CreateFolderRepositoryReadOnly(default(CancellationToken), mappedPath, IncludeSubDirectories, SearchPattern);
+            var repository = _fileSystemGenericRepositoryFactory.CreateFolderRepositoryReadOnly(default(CancellationToken), mappedPath, IncludeSubDirectories, SearchPattern, AtLeastOneFile);
             var data = await repository.GetAllAsync(LamdaHelper.GetOrderByFunc<DirectoryInfo>(OrderByProperty, OrderByType), null, null);
 
             var results = new List<SelectListItem>();

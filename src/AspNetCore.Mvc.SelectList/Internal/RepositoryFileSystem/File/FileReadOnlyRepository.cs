@@ -190,45 +190,6 @@ namespace AspNetCore.Mvc.SelectList.Internal.RepositoryFileSystem.File
             return Task.FromResult(result);
         }
 
-        public virtual FileInfo GetMain()
-        {
-            FileInfo main = null;
-
-            var ordered = GetQueryable(null, null, o => o.OrderBy(f => f.LastWriteTime), null, null);
-            main = ordered.FirstOrDefault();
-
-            if (main != null)
-            {
-                var mainFile = ordered.Where(f => f.Name.ToLower().Contains("main")).FirstOrDefault();
-                if (mainFile != null)
-                {
-                    main = mainFile;
-                }
-            }
-
-            return main;
-        }
-
-        public async virtual Task<FileInfo> GetMainAsync()
-        {
-            FileInfo main = null;
-
-            var ordered =  await GetQueryable(null, null, o => o.OrderByDescending(f => f.LastWriteTime), null, null).ToListAsync(_cancellationToken);
-
-            main = ordered.FirstOrDefault();
-
-            if (ordered.Count() > 0)
-            {
-                var mainFile = ordered.Where(f => f.Name.ToLower().Contains("main")).FirstOrDefault();
-                if (mainFile != null)
-                {
-                    main = mainFile;
-                }
-            }
-
-            return main;
-        }
-
         public virtual FileInfo GetFirst(
            Expression<Func<FileInfo, bool>> filter = null,
            Func<IQueryable<FileInfo>, IOrderedQueryable<FileInfo>> orderBy = null)

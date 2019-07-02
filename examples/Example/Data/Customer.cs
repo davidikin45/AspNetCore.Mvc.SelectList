@@ -15,11 +15,21 @@ namespace Example.Data
 
         [Display(Name = "Age")]
         [SelectListOptions("18-30","31-50","50+")]
+        [SelectListOptions("35-70", "70-80", "80+", SelectListId = "List2")]
         public string Age { get; set; }
 
         [Display(Name = "Susbcription")]
         [SelectListDb(typeof(AppDbContext), typeof(Subscription), "{" + nameof(Subscription.Description) + "} - {" + nameof(Subscription.Cost) + "}", OrderByProperty = nameof(Subscription.Order), OrderByType = "asc" )]
         public string SubscriptionId { get; set; }
+
+        [Display(Name = "Susbcription 2")]
+        [SelectListDb(typeof(AppDbContext), typeof(Subscription), "SELECT * FROM Subscriptions WHERE Description = {0}", new object[] { "Standard" }, "{" + nameof(Subscription.Description) + "} - {" + nameof(Subscription.Cost) + "}")]
+        public string SubscriptionId2 { get; set; }
+
+        [Display(Name = "Susbcription")]
+        [SelectListDb(typeof(AppDbContext), typeof(Subscription), "{" + nameof(Subscription.Description) + "} - {" + nameof(Subscription.Cost) + "}", OrderByProperty = nameof(Subscription.Order), OrderByType = "asc")]
+        [SelectListDbWhere(nameof(Subscription.Description), "Standard")]
+        public string SubscriptionId3 { get; set; }
 
         [Display(Name = "File")]
         [SelectListFile("~/files/")]

@@ -14,12 +14,13 @@ namespace AspNetCore.Mvc.SelectList
 {
     public static class HtmlHelperExtensions
     {
-        public static IEnumerable<SelectListItem> SelectListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string selectListId = "", bool selectedOnly = false)
+        public static IEnumerable<SelectListItem> SelectListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string selectListId = null, bool selectedOnly = false)
         {
-            return htmlHelper.SelectListForAsync(expression, selectListId, selectedOnly).GetAwaiter().GetResult();
+            var result = htmlHelper.SelectListForAsync(expression, selectListId, selectedOnly).GetAwaiter().GetResult();
+            return result;
         }
 
-        public static async Task<IEnumerable<SelectListItem>> SelectListForAsync<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string selectListId = "", bool selectedOnly = false)
+        public static async Task<IEnumerable<SelectListItem>> SelectListForAsync<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string selectListId = null, bool selectedOnly = false)
         {
             //pass modelexplorer
             var modelExpression = GetModelExpression(htmlHelper, expression);
@@ -28,23 +29,24 @@ namespace AspNetCore.Mvc.SelectList
 
         private static ModelExpression GetModelExpression<TModel,TResult>(IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression)
         {
-            var modelExpressionProvider = htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<ModelExpressionProvider>();
+            var modelExpressionProvider = new ModelExpressionProvider(htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>(),
+                htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<ExpressionTextCache>());
             return modelExpressionProvider.CreateModelExpression(htmlHelper.ViewData, expression);
         }
 
-        public static IEnumerable<SelectListItem> SelectList(this IHtmlHelper htmlHelper, string expression, string selectListId = "", bool selectedOnly = false)
+        public static IEnumerable<SelectListItem> SelectList(this IHtmlHelper htmlHelper, string expression, string selectListId = null, bool selectedOnly = false)
         {
             //dont pass modelexplorer
             return htmlHelper.SelectListAsync(expression, selectListId, selectedOnly).GetAwaiter().GetResult();
         }
 
-        public static async Task<IEnumerable<SelectListItem>> SelectListAsync(this IHtmlHelper htmlHelper, string expression, string selectListId = "", bool selectedOnly = false)
+        public static async Task<IEnumerable<SelectListItem>> SelectListAsync(this IHtmlHelper htmlHelper, string expression, string selectListId = null, bool selectedOnly = false)
         {
             //dont pass modelexplorer
             return (await GenerateSelectListAsync(htmlHelper, null, expression, selectListId, selectedOnly)) ?? GetSelectListItems(htmlHelper.ViewContext, expression);
         }
 
-        private static Task<IEnumerable<SelectListItem>> GenerateSelectListAsync(IHtmlHelper htmlHelper, ModelExplorer modelExplorer, string expression, string selectListId = "", bool selectedOnly = false)
+        private static async Task<IEnumerable<SelectListItem>> GenerateSelectListAsync(IHtmlHelper htmlHelper, ModelExplorer modelExplorer, string expression, string selectListId = null, bool selectedOnly = false)
         {
             var modelExplorerToExtractAttribute = ExpressionMetadataProvider.FromStringExpression(expression, htmlHelper.ViewData, htmlHelper.MetadataProvider);
 
@@ -56,7 +58,7 @@ namespace AspNetCore.Mvc.SelectList
             if (selectListAttribute == null)
                 return null;
 
-            return selectListAttribute.GetSelectListAsync(new SelectListContext(htmlHelper.ViewContext, modelExplorer, expression, selectedOnly));
+            return await selectListAttribute.GetSelectListAsync(new SelectListContext(htmlHelper.ViewContext, modelExplorer, expression, selectedOnly));
         }
 
         private static IEnumerable<SelectListItem> GetSelectListItems(

@@ -6,10 +6,16 @@
         <input asp-for="Name">
         <br />
         <label asp-for="Age"></label>
-        <select asp-for="Age"></select>
+        <select asp-for="Age" asp-items="@(Html.SelectListFor(model => model.Age, "List2"))"></select>
         <br />
         <label asp-for="SubscriptionId"></label>
         <select asp-for="SubscriptionId"></select>
+        <br />
+        <label asp-for="SubscriptionId2"></label>
+        <select asp-for="SubscriptionId2"></select>
+        <br />
+        <label asp-for="SubscriptionId3"></label>
+        <select asp-for="SubscriptionId3"></select>
         <br />
         <label asp-for="File"></label>
         <select asp-for="File"></select>

@@ -15,17 +15,32 @@ namespace AspNetCore.Mvc.SelectList
 {
     public static class HtmlHelperExtensions
     {
-
-        public static IEnumerable<ModelSelectListItem<TModel>> SelectListForModelType<TModel>(this IHtmlHelper htmlHelper, string selectListId = null) where TModel : class, new()
+        public static IEnumerable<ModelSelectListItem<TModel>> SelectListForModelType<TModel>(this IHtmlHelper htmlHelper) where TModel : class, new()
         {
-            var newhtmlHelper = htmlHelper.For<TModel>();
-            return newhtmlHelper.SelectListForModelTypeAsync<TModel>(selectListId).GetAwaiter().GetResult();
+            return htmlHelper.SelectListForModelType<TModel>(new object[] { }, null);
         }
 
-        public static async Task<IEnumerable<ModelSelectListItem<TModel>>> SelectListForModelTypeAsync<TModel>(this IHtmlHelper htmlHelper, string selectListId = null) where TModel : class, new()
+        public static IEnumerable<ModelSelectListItem<TModel>> SelectListForModelType<TModel>(this IHtmlHelper htmlHelper, object[] keys, string selectListId = null) where TModel : class, new()
         {
-            var newhtmlHelper = htmlHelper.For<TModel>();
-            var result = await newhtmlHelper.SelectListAsync("", selectListId, false);
+            var newhtmlHelper = htmlHelper.For<List<TModel>>();
+
+            return newhtmlHelper.SelectListForModelTypeAsync<TModel>(keys, selectListId).GetAwaiter().GetResult();
+        }
+
+        public static async Task<IEnumerable<ModelSelectListItem<TModel>>> SelectListForModelTypeAsync<TModel>(this IHtmlHelper htmlHelper) where TModel : class, new()
+        {
+            return await htmlHelper.SelectListForModelTypeAsync<TModel>(new object[] { }, null);
+        }
+
+        public static async Task<IEnumerable<ModelSelectListItem<TModel>>> SelectListForModelTypeAsync<TModel>(this IHtmlHelper htmlHelper, object[] keys, string selectListId = null) where TModel : class, new()
+        {
+            var newhtmlHelper = htmlHelper.For<List<TModel>>();
+
+            var fullName = NameAndIdProvider.GetFullHtmlFieldName(newhtmlHelper.ViewContext, "");
+            var keyArray = keys.Select(key => key.ToString()).ToArray();
+            newhtmlHelper.ViewContext.ViewData.ModelState.SetModelValue(fullName, keyArray, String.Join(",", keyArray));
+
+            var result = await newhtmlHelper.SelectListAsync("", selectListId, keyArray.Length > 0 ? true : false);
 
             if (result != null)
                 return result.Cast<ModelSelectListItem>().Select(item => new ModelSelectListItem<TModel>(item));
@@ -94,7 +109,17 @@ namespace AspNetCore.Mvc.SelectList
             }
             else if (modelExplorerToExtractAttribute.Metadata.MetadataKind == ModelMetadataKind.Type)
             {
-                selectListAttribute = defaultModelMetadata.Attributes.TypeAttributes.OfType<SelectListAttribute>().Where(a => a.SelectListId == selectListId).FirstOrDefault();
+                if(modelExplorerToExtractAttribute.Metadata.IsEnumerableType)
+                {
+                    if (!(modelExplorerToExtractAttribute.Metadata.ElementMetadata is DefaultModelMetadata collectionModelMetadata))
+                        return null;
+
+                    selectListAttribute = collectionModelMetadata.Attributes.TypeAttributes.OfType<SelectListAttribute>().Where(a => a.SelectListId == selectListId).FirstOrDefault();
+                }
+                else
+                {
+                    selectListAttribute = defaultModelMetadata.Attributes.TypeAttributes.OfType<SelectListAttribute>().Where(a => a.SelectListId == selectListId).FirstOrDefault();
+                }
             }
 
             if (selectListAttribute == null)

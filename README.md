@@ -2,7 +2,7 @@
 
 [![nuget](https://img.shields.io/nuget/v/AspNetCore.Mvc.SelectList.svg)](https://www.nuget.org/packages/AspNetCore.Mvc.SelectList/)  ![Downloads](https://img.shields.io/nuget/dt/AspNetCore.Mvc.SelectList.svg "Downloads")
 
-ASP.NET Core library which gives the ability to specify select lists via Model Attributes
+ASP.NET Core library which gives the ability to specify select lists via Model Attributes at both Type and Property levels. The select lists can be used to populate dropdowns but also as an IEnumerable collection to loop through in views.
 
 ## Installation
 
@@ -102,6 +102,13 @@ public class Customer
 {
     @item.Html.DisplayFor(c => c.Name);
     <br />
+}
+```
+
+```
+{
+	var item = await Html.SelectListForModelTypeAsync<Customer>(new object[]{"ecf1f87a-ce11-471d-abae-735d23c91256"}).FirstOrDefault();
+    @item.Html.DisplayFor(c => c.Name);
 }
 ```
 

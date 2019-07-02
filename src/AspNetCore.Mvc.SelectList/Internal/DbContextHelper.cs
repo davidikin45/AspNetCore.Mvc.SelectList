@@ -24,7 +24,21 @@ namespace AspNetCore.Mvc.SelectList.Internal
             var add_method = idList.GetType().GetMethod("Add");
             foreach (var value in values)
             {
-                add_method.Invoke(idList, new object[] { (dynamic)Convert.ChangeType(value, propType) });
+                if(propType == typeof(Guid))
+                {
+                    if(value.GetType() == typeof(Guid))
+                    {
+                        add_method.Invoke(idList, new object[] { value });
+                    }
+                    else
+                    {
+                        add_method.Invoke(idList, new object[] { Guid.Parse(value.ToString()) });
+                    }
+                }
+                else
+                {
+                    add_method.Invoke(idList, new object[] { (dynamic)Convert.ChangeType(value, propType) });
+                }
             }
 
             var contains_method = idList.GetType().GetMethod("Contains");

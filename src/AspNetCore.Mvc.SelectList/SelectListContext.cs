@@ -48,7 +48,7 @@ namespace AspNetCore.Mvc.SelectList
 
             CurrentValues = currentValues;
             //IdFor
-            ModelExplorer = modelExplorer ?? ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>()); ;
+            ModelExplorer = modelExplorer ?? ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>()); ;
             Html = html ?? CreateHtmlHelper(viewContext);
             SelectedOnly = selectedOnly;
         }

@@ -1,6 +1,8 @@
 ﻿using Example.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Example.Controllers
@@ -18,6 +20,9 @@ namespace Example.Controllers
         [HttpGet]
         public IActionResult Edit()
         {
+            //Override attribute select list
+            //ViewBag.File = new List<SelectListItem>() { };
+
             return View("Edit", _db.Customers.Find(_customerId));
         }
 

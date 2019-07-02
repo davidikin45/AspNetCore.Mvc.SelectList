@@ -73,7 +73,14 @@ namespace AspNetCore.Mvc.SelectList
         {
             //pass modelexplorer
             var modelExpression = GetModelExpression(htmlHelper, expression);
-            return (await GenerateSelectListAsync(htmlHelper, modelExpression.ModelExplorer, modelExpression.Name, selectListId, selectedOnly)) ?? GetSelectListItems(htmlHelper.ViewContext, modelExpression.Name);
+            if (selectListId == null)
+            {
+                return GetSelectListItems(htmlHelper.ViewContext, modelExpression.Name) ?? (await GenerateSelectListAsync(htmlHelper, modelExpression.ModelExplorer, modelExpression.Name, selectListId, selectedOnly));
+            }
+            else
+            {
+                return await GenerateSelectListAsync(htmlHelper, modelExpression.ModelExplorer, modelExpression.Name, selectListId, selectedOnly);
+            }
         }
 
         private static ModelExpression GetModelExpression<TModel, TResult>(IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression)
@@ -92,7 +99,14 @@ namespace AspNetCore.Mvc.SelectList
         public static async Task<IEnumerable<SelectListItem>> SelectListAsync(this IHtmlHelper htmlHelper, string expression, string selectListId = null, bool selectedOnly = false)
         {
             //dont pass modelexplorer
-            return (await GenerateSelectListAsync(htmlHelper, null, expression, selectListId, selectedOnly)) ?? GetSelectListItems(htmlHelper.ViewContext, expression);
+            if(selectListId == null)
+            {
+                return GetSelectListItems(htmlHelper.ViewContext, expression) ?? (await GenerateSelectListAsync(htmlHelper, null, expression, selectListId, selectedOnly));
+            }
+            else
+            {
+                return await GenerateSelectListAsync(htmlHelper, null, expression, selectListId, selectedOnly);
+            }
         }
 
         private static async Task<IEnumerable<SelectListItem>> GenerateSelectListAsync(IHtmlHelper htmlHelper, ModelExplorer modelExplorer, string expression, string selectListId = null, bool selectedOnly = false)
@@ -145,13 +159,13 @@ namespace AspNetCore.Mvc.SelectList
             // First check whether above evaluation was successful and did not match ViewData.Model.
             if (value == null || value == viewContext.ViewData.Model)
             {
-                throw new InvalidOperationException($"Must be IEnumerable<{nameof(SelectListItem)}>");
+                return null;
             }
 
             // Second check the Eval() call returned a collection of SelectListItems.
             if (!(value is IEnumerable<SelectListItem> selectList))
             {
-                throw new InvalidOperationException($"Must be IEnumerable<{nameof(SelectListItem)}>");
+                return null;
             }
 
             return selectList;

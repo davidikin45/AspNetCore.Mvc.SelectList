@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -107,17 +108,58 @@ namespace AspNetCore.Mvc.SelectList
 
         public TagBuilder GenerateSelect(ViewContext viewContext, ModelExplorer modelExplorer, string optionLabel, string expression, IEnumerable<SelectListItem> selectList, ICollection<string> currentValues, bool allowMultiple, object htmlAttributes)
         {
+            //Emtpty List when coming from Select TagHelper
             if (selectList == null || selectList.ToList().Count == 0)
             {
-                modelExplorer = modelExplorer ?? ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
-                var selectListItems = GetSelectListItems(viewContext, modelExplorer, expression, currentValues);
-                if(selectListItems != null)
+   
+                bool selectFromAttribute = true;
+                if(selectList == null || selectList.ToList().Count == 0)
                 {
-                    selectList = selectListItems;
+                    selectList = GetSelectListItems(viewContext, expression);
+                    selectFromAttribute = selectList == null;
+                }
+
+                if(selectFromAttribute)
+                {
+                    modelExplorer = modelExplorer ?? ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
+                    var selectListItems = GetSelectListItems(viewContext, modelExplorer, expression, currentValues);
+                    if (selectListItems != null)
+                    {
+                        selectList = selectListItems;
+                    }
                 }
             }
 
             return _htmlGenerator.GenerateSelect(viewContext, modelExplorer, optionLabel, expression, selectList, currentValues, allowMultiple, htmlAttributes);
+        }
+
+        private static IEnumerable<SelectListItem> GetSelectListItems(
+           ViewContext viewContext,
+           string expression)
+        {
+            if (viewContext == null)
+            {
+                throw new ArgumentNullException(nameof(viewContext));
+            }
+
+            // Method is called only if user did not pass a select list in. They must provide select list items in the
+            // ViewData dictionary and definitely not as the Model. (Even if the Model datatype were correct, a
+            // <select> element generated for a collection of SelectListItems would be useless.)
+            var value = viewContext.ViewData.Eval(expression);
+
+            // First check whether above evaluation was successful and did not match ViewData.Model.
+            if (value == null || value == viewContext.ViewData.Model)
+            {
+                return null;
+            }
+
+            // Second check the Eval() call returned a collection of SelectListItems.
+            if (!(value is IEnumerable<SelectListItem> selectList))
+            {
+                return null;
+            }
+
+            return selectList;
         }
 
         private IEnumerable<SelectListItem> GetSelectListItems(ViewContext viewContext, ModelExplorer modelExplorer, string expression, ICollection<string> currentValues)

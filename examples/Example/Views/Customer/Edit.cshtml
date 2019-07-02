@@ -1,33 +1,33 @@
 ﻿@model Customer
 
-    <form asp-controller="Customer" asp-action="Update" method="post">
-        <input asp-for="Id" />
-        <label asp-for="Name"></label>
-        <input asp-for="Name">
-        <br />
-        <label asp-for="Age"></label>
-        <select asp-for="Age" asp-items="@(Html.SelectListFor(model => model.Age, "List2"))"></select>
-        <br />
-        <label asp-for="SubscriptionId"></label>
-        <select asp-for="SubscriptionId"></select>
-        <br />
-        <label asp-for="SubscriptionId2"></label>
-        <select asp-for="SubscriptionId2"></select>
-        <br />
-        <label asp-for="SubscriptionId3"></label>
-        <select asp-for="SubscriptionId3"></select>
-        <br />
-        <label asp-for="File"></label>
-        <select asp-for="File"></select>
-        <br />
-        <label asp-for="Folder"></label>
-        <select asp-for="Folder"></select>
-        <br />
-        <label asp-for="File2"></label>
-        <select asp-for="File2"></select>
-        <br />
-        <label asp-for="StatusId"></label>
-        <select asp-for="StatusId"></select>
-        <br />
-        <button type="submit">Add/Update</button>
-    </form>
+<form asp-controller="Customer" asp-action="Update" method="post">
+    <input asp-for="Id" />
+    <label asp-for="Name"></label>
+    <input asp-for="Name">
+    <br />
+    <label asp-for="Age"></label>
+    <select asp-for="Age" asp-items="@(Html.SelectListFor(model => model.Age, "List2"))"></select>
+    <br />
+    <label asp-for="SubscriptionId"></label>
+    <select asp-for="SubscriptionId"></select>
+    <br />
+    <label asp-for="SubscriptionId2"></label>
+    <select asp-for="SubscriptionId2"></select>
+    <br />
+    <label asp-for="SubscriptionId3"></label>
+    <select asp-for="SubscriptionId3"></select>
+    <br />
+    <label asp-for="File"></label>
+    <select asp-for="File"></select>
+    <br />
+    <label asp-for="Folder"></label>
+    <select asp-for="Folder"></select>
+    <br />
+    <label asp-for="File2"></label>
+    <select asp-for="File2"></select>
+    <br />
+    <label asp-for="StatusId"></label>
+    <select asp-for="StatusId"></select>
+    <br />
+    <button type="submit">Add/Update</button>
+</form>

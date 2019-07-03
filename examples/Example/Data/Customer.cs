@@ -29,7 +29,7 @@ namespace Example.Data
 
         [Display(Name = "Susbcription")]
         [SelectListDb(typeof(AppDbContext), typeof(Subscription), "{" + nameof(Subscription.Description) + "} - {" + nameof(Subscription.Cost) + "}", OrderByProperty = nameof(Subscription.Order), OrderByType = "asc")]
-        [SelectListDbWhere(nameof(Subscription.Description), "Standard")]
+        [SelectListDbWhereEquals(nameof(Subscription.Description), "Standard")]
         public string SubscriptionId3 { get; set; }
 
         [Display(Name = "File")]

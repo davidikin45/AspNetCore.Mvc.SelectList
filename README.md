@@ -4,6 +4,14 @@
 
 ASP.NET Core library which gives the ability to specify select lists via Model Attributes at both Type and Property levels. The select lists can be used to populate dropdowns but also as an IEnumerable collection to loop through in views.
 
+Features:
+1. Uses expression syntax such as "{Id} - {Description} - {Cost}" for SelectListItem text/value rather than a single property. I recommend using nameof(Class.Property) for compile time safety.
+2. Uses HtmlHelper.Display to render text/value rather than reflection used in [SelectList](https://github.com/aspnet/AspNetCore/blob/c565386a3ed135560bc2e9017aa54a950b4e35dd/src/Mvc/Mvc.ViewFeatures/src/Rendering/SelectList.cs) and [MultiSelectList](https://github.com/aspnet/AspNetCore/blob/c565386a3ed135560bc2e9017aa54a950b4e35dd/src/Mvc/Mvc.ViewFeatures/src/Rendering/MultiSelectList.cs). The advantage being you get model property formatting.
+3. When used with services.AddSelectListAttributes() select lists (where selectListId = null) are automatically bound to SelectTagHelper and can be overriden by setting ViewBag.Property or ViewData["Property"] to IEnumerable<SelectListItem>. Usually [SelectTagHelper](https://github.com/aspnet/AspNetCore/blob/f5b6039add50ea84ddb151cd6daf5207119dc116/src/Mvc/Mvc.TagHelpers/src/SelectTagHelper.cs) doesn't allow passing IEnumerable<SelectListItem> in the ViewBag/ViewData.
+4. Ability to define additional select lists by specifying selectListId.
+5. Ability to extend by inheriting from SelectListAttribute.
+6. Not limited to model properties. Can also be applied to classes.
+
 ## Installation
 
 ### NuGet
@@ -23,6 +31,18 @@ services.AddSelectListAttributes();
 ```
 #### Model Example
 ```
+public class Subscription
+{
+	public string Id { get; set; }
+
+	public int Order { get; set; }
+
+	public string Description { get; set; }
+
+	[DisplayFormat(DataFormatString = "{0:C2}")]
+	public decimal Cost { get; set; }
+}
+
 [SelectListDb(typeof(AppDbContext), typeof(Customer), OrderByProperty = nameof(Customer.Id))]
 public class Customer
 {
@@ -47,7 +67,7 @@ public class Customer
 
 	[Display(Name = "Susbcription")]
 	[SelectListDb(typeof(AppDbContext), typeof(Subscription), "{" + nameof(Subscription.Description) + "} - {" + nameof(Subscription.Cost) + "}", OrderByProperty = nameof(Subscription.Order), OrderByType = "asc")]
-	[SelectListDbWhere(nameof(Subscription.Description), "Standard")]
+	[SelectListDbWhereEquals(nameof(Subscription.Description), "Standard")]
 	public string SubscriptionId3 { get; set; }
 
 	[Display(Name = "File")]
@@ -129,16 +149,35 @@ public IActionResult Edit()
 }
 ```
 
+#### Custom Select List Attribute
+
+```
+public class SelectListCustomAttribute : SelectListAttribute
+{
+	public SelectListCustomAttribute()
+	{
+
+	}
+
+	protected override Task<IEnumerable<SelectListItem>> GetSelectListItemsAsync(SelectListContext context)
+	{
+		var db = context.HttpContext.RequestServices.GetRequiredService<AppContext>();
+		return new List<SelectListItem>();
+	}     
+}
+```
+
 ## Attributes
 
-| Attribute                  | Description                                                                        |
-|:---------------------------|:-----------------------------------------------------------------------------------|
-| SelectListAttribute        | Base class                                                                         |
-| SelectListOptionsAttribute | Specify Options                                                                    |
-| SelectListDbAttribute      | Specify DbContext and ModelType                                                    |
-| SelectListDbWhereAttribute | Specify DbContext Where Clause                                                     |
-| SelectListFileAttribute    | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
-| SelectListFolderAttribute  | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
+| Attribute                       | Description                                                                        |
+|:--------------------------------|:-----------------------------------------------------------------------------------|
+| SelectListAttribute             | Base class for extension                                                           |
+| SelectListOptionsAttribute      | Specify Options                                                                    |
+| SelectListDbAttribute           | Specify DbContext and ModelType                                                    |
+| SelectListDbWhereEqualsAttribute| Specify DbContext Where Property Equals Clause                                     |
+| SelectListFileAttribute         | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
+| SelectListFolderAttribute       | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
+
 
 ## Authors
 

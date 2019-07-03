@@ -22,14 +22,14 @@ namespace AspNetCore.Mvc.SelectList
 
     public class ModelSelectListItem : SelectListItem
     {
+        public ModelSelectListItem<TModel> Cast<TModel>()
+        {
+            return new ModelSelectListItem<TModel>(this);
+        }
+
         public dynamic Model {get; set;}
 
         public IHtmlHelper Html { get; set; }
-
-        public IHtmlHelper<TModel> HtmlAs<TModel>()
-        {
-            return (IHtmlHelper<TModel>)Html;
-        }
 
         public ModelSelectListItem()
         {

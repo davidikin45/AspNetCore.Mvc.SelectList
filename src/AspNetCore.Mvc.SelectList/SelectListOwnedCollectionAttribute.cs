@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,22 +20,10 @@ namespace AspNetCore.Mvc.SelectList
 
         protected override Task<IEnumerable<SelectListItem>> GetSelectListItemsAsync(SelectListContext context)
         {
-            var results = new List<SelectListItem>();
-            foreach (var item in context.Model)
-            {
-                var itemObject = (object)item;
-
-                results.Add(new ModelSelectListItem()
-                {
-                    Model = item,
-                    Html = Internal.HtmlHelperExtensions.For(context.Html, (dynamic)item),
-                    Text = context.Display(item, DataTextFieldExpression),
-                    Value = item.GetPropValue(DataValueField) != null ? item.GetPropValue(DataValueField).ToString() : "",
-                    Selected = true
-                });     
-            }
-
-            return Task.FromResult(results.AsEnumerable());
+            if(context.Model != null)
+                return Task.FromResult(new ModelMultiSelectList(context.Html, (IEnumerable)context.Model, DataValueField, DataTextFieldExpression, (IEnumerable)context.Model).AsEnumerable<SelectListItem>());
+            else
+                return Task.FromResult(Enumerable.Empty<SelectListItem>());
         }
     }
 }

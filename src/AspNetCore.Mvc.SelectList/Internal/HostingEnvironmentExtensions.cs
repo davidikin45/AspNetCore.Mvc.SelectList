@@ -28,9 +28,9 @@ namespace AspNetCore.Mvc.SelectList.Internal
                 }
                 result = Path.Combine(contentRoot, result.Replace('/', '\\'));
 
-                if (!result.EndsWith("\\"))
+                if (!result.EndsWith(@"\") && !Path.GetFileName(result).Contains("."))
                 {
-                    result = result + "\\";
+                    result = result + @"\";
                 }
             }
 
@@ -40,6 +40,7 @@ namespace AspNetCore.Mvc.SelectList.Internal
         public static bool IsContentPathMapped(this IHostingEnvironment hostingEnvironement, string path)
         {
             var result = path ?? string.Empty;
+
             return result.StartsWith(hostingEnvironement.ContentRootPath,
                 StringComparison.Ordinal);
         }
@@ -55,7 +56,7 @@ namespace AspNetCore.Mvc.SelectList.Internal
 
             if (hostingEnvironement.IsWwwPathMapped(path) == false)
             {
-                var wwwroot = hostingEnvironement.WebRootPath + @"\";
+                var wwwroot = hostingEnvironement.WebRootPath;
                 if (result.StartsWith("~", StringComparison.Ordinal))
                 {
                     result = result.Substring(1);
@@ -66,9 +67,9 @@ namespace AspNetCore.Mvc.SelectList.Internal
                 }
                 result = Path.Combine(wwwroot, result.Replace('/', '\\'));
 
-                if (!result.EndsWith("\\"))
+                if (!result.EndsWith(@"\") && !Path.GetFileName(result).Contains("."))
                 {
-                    result = result + "\\";
+                    result = result + @"\";
                 }
             }
 
@@ -78,7 +79,7 @@ namespace AspNetCore.Mvc.SelectList.Internal
         public static bool IsWwwPathMapped(this IHostingEnvironment hostingEnvironement, string path)
         {
             var result = path ?? string.Empty;
-            return result.StartsWith(hostingEnvironement.WebRootPath + @"\",
+            return result.StartsWith(hostingEnvironement.WebRootPath,
                 StringComparison.Ordinal);
         }
 

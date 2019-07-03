@@ -86,15 +86,14 @@ namespace AspNetCore.Mvc.SelectList
                 {
                     //Loop over where clauses
 
-
-                    IEnumerable<SelectListDbWhereAttribute> whereClauseAttributes = null;
+                    IEnumerable<SelectListDbWhereEqualsAttribute> whereClauseAttributes = null;
                     if(defaultModelMetadata.MetadataKind == ModelMetadataKind.Property)
                     {
-                        whereClauseAttributes = defaultModelMetadata.Attributes.PropertyAttributes.OfType<SelectListDbWhereAttribute>().Where(a => a.SelectListId == this.SelectListId);
+                        whereClauseAttributes = defaultModelMetadata.Attributes.PropertyAttributes.OfType<SelectListDbWhereEqualsAttribute>().Where(a => a.SelectListId == this.SelectListId);
                     }
                     else if (defaultModelMetadata.MetadataKind == ModelMetadataKind.Type)
                     {
-                        whereClauseAttributes = defaultModelMetadata.Attributes.TypeAttributes.OfType<SelectListDbWhereAttribute>().Where(a => a.SelectListId == this.SelectListId);
+                        whereClauseAttributes = defaultModelMetadata.Attributes.TypeAttributes.OfType<SelectListDbWhereEqualsAttribute>().Where(a => a.SelectListId == this.SelectListId);
                     }
 
                     if(whereClauseAttributes != null)
@@ -130,33 +129,19 @@ namespace AspNetCore.Mvc.SelectList
             //Get Results
             IEnumerable results = (IEnumerable)(await EntityFrameworkQueryableExtensions.ToListAsync((dynamic)query, CancellationToken.None));
 
-            var items = new List<SelectListItem>();
-            foreach (var item in results)
-            {
-                var selectListItem = new ModelSelectListItem()
-                {
-                    Model = item,
-                    Html = Internal.HtmlHelperExtensions.For(context.Html, (dynamic)item),
-                    Text = context.Display(item, DataTextFieldExpression),
-                    Value = item.GetPropValue(DataValueField) != null ? item.GetPropValue(DataValueField).ToString() : ""
-                };
-
-                items.Add(selectListItem);
-            }
-
-            return items;
+            return new ModelMultiSelectList(context.Html, results, DataValueField, DataTextFieldExpression);
         }
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
-    public class SelectListDbWhereAttribute : Attribute
+    public class SelectListDbWhereEqualsAttribute : Attribute
     {
         public string PropertyName { get; set; }
         public object[] Values { get; set; }
 
         public string SelectListId { get; set; }
 
-        public SelectListDbWhereAttribute(string propertyName, params object[] values)
+        public SelectListDbWhereEqualsAttribute(string propertyName, params object[] values)
         {
             PropertyName = propertyName;
             Values = values;

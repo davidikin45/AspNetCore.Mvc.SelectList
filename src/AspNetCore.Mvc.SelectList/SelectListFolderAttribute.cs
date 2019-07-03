@@ -56,12 +56,14 @@ namespace AspNetCore.Mvc.SelectList
             var results = new List<SelectListItem>();
             foreach (var item in data)
             {
+                IHtmlHelper html = context.CreateHtmlHelper((dynamic)item);
+
                 results.Add(new ModelSelectListItem()
                 {
                     Model = item,
-                    Html = Internal.HtmlHelperExtensions.For(context.Html, (dynamic)item),
-                    Text = RemoveSearchPathFromText ?  context.Display(item, DataTextFieldExpression).Replace(searchPath, "") : context.Display(item, DataTextFieldExpression),
-                    Value = item.GetPropValue(dataValueField) != null ? (RemoveSearchPathFromValue ? item.GetPropValue(dataValueField).ToString().Replace(searchPath, "") : item.GetPropValue(dataValueField).ToString()) : ""
+                    Html = html,
+                    Text = RemoveSearchPathFromText ? context.Eval(html, item, DataTextFieldExpression).Replace(searchPath, "") : context.Eval(html, item, DataTextFieldExpression),
+                    Value = RemoveSearchPathFromText ? context.Eval(html, item, dataValueField).Replace(searchPath, "") : context.Eval(html, item, dataValueField),
                 });
             }
 

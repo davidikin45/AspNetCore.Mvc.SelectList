@@ -1,6 +1,4 @@
-﻿using AspNetCore.Mvc.SelectList.Internal;
-using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
@@ -9,9 +7,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.Encodings.Web;
-using System.Text.RegularExpressions;
 
 namespace AspNetCore.Mvc.SelectList
 {
@@ -87,33 +83,20 @@ namespace AspNetCore.Mvc.SelectList
             }
         }
 
-        public string Display(dynamic obj, string displayExpression)
+        public IHtmlHelper<TModel> CreateHtmlHelper<TModel>(TModel model)
         {
-            string value = displayExpression;
-
-            if (!value.Contains("{") && !value.Contains(" "))
-            {
-                value = "{" + value + "}";
-            }
-
-            var replacementTokens = GetReplacementTokens(value);
-            foreach (var token in replacementTokens)
-            {
-                var propertyName = token.Substring(1, token.Length - 2);
-                var displayString = ((IHtmlContent)ModelHelperExtensions.Display(Html, obj, propertyName)).Render();
-                value = value.Replace(token, displayString);
-            }
-
-            return value;
+            return Internal.HtmlHelperExtensions.For(Html, model);
         }
 
-        private List<String> GetReplacementTokens(String str)
+        public string Eval(object container, string expression)
         {
-            Regex regex = new Regex(@"{(.*?)}", RegexOptions.IgnoreCase);
-            MatchCollection matches = regex.Matches(str);
+            IHtmlHelper newHtml = Internal.HtmlHelperExtensions.For(Html, (dynamic)container);
+            return Eval(newHtml, container, expression);
+        }
 
-            // Results include braces (undesirable)
-            return matches.Cast<Match>().Select(m => m.Value).Distinct().ToList();
+        public string Eval(IHtmlHelper html, object container, string expression)
+        {
+            return ModelMultiSelectList.Eval(html, container, expression);
         }
     }
 }

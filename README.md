@@ -7,10 +7,14 @@ ASP.NET Core library which gives the ability to specify select lists via Model A
 Features:
 1. Uses expression syntax such as "{Id} - {Description} - {Cost}" for SelectListItem text/value rather than a single property. I recommend using nameof(Class.Property) for compile time safety.
 2. Uses HtmlHelper.Display to render text/value rather than reflection used in [SelectList](https://github.com/aspnet/AspNetCore/blob/c565386a3ed135560bc2e9017aa54a950b4e35dd/src/Mvc/Mvc.ViewFeatures/src/Rendering/SelectList.cs) and [MultiSelectList](https://github.com/aspnet/AspNetCore/blob/c565386a3ed135560bc2e9017aa54a950b4e35dd/src/Mvc/Mvc.ViewFeatures/src/Rendering/MultiSelectList.cs). The advantage being you get model property formatting.
-3. When used with services.AddSelectListAttributes() select lists (where selectListId = null) are automatically bound to SelectTagHelper and can be overriden by setting ViewBag.Property or ViewData["Property"] to IEnumerable<SelectListItem>. Usually [SelectTagHelper](https://github.com/aspnet/AspNetCore/blob/f5b6039add50ea84ddb151cd6daf5207119dc116/src/Mvc/Mvc.TagHelpers/src/SelectTagHelper.cs) doesn't allow passing IEnumerable<SelectListItem> in the ViewBag/ViewData.
+3. When used with services.AddSelectListAttributes() select lists (where selectListId = null) are automatically bound to SelectTagHelper and can be overriden by setting ViewBag.Property or ViewData["Property"] to IEnumerable\<SelectListItem\>. Usually [SelectTagHelper](https://github.com/aspnet/AspNetCore/blob/f5b6039add50ea84ddb151cd6daf5207119dc116/src/Mvc/Mvc.TagHelpers/src/SelectTagHelper.cs) doesn't allow passing IEnumerable\<SelectListItem\> in the ViewBag/ViewData.
 4. Ability to define additional select lists by specifying selectListId.
-5. Ability to extend by inheriting from SelectListAttribute.
-6. Not limited to model properties. Can also be applied to classes.
+5. Ability to extend by inheriting from SelectListAttribute. Have access to IServiceProvider on the SelectListContext.
+6. Not limited to model properties. Can also be applied to types.
+
+Advantages:
+1. Keep select list logic with model, controllers slim and views for render only.
+2. Could be exended to expose select lists via API in a generic fashion. e.g /api/customers/lookup/{selectListId} or /api/customers/age/lookup/{selectListId}
 
 ## Installation
 

@@ -35,6 +35,16 @@ services.AddSelectListAttributes();
 ```
 #### Model Example
 ```
+public enum MailPreference
+{
+	[Display(Name = "Email")]
+	Email,
+	[Display(Name = "Mail")]
+	Mail,
+	[Display(Name = "None")]
+	None
+}
+
 public class Subscription
 {
 	public string Id { get; set; }
@@ -89,6 +99,10 @@ public class Customer
 	[Display(Name = "Status")]
 	[SelectListDb(typeof(AppDbContext), typeof(Status), "{" + nameof(Status.Description) + "} - {" + nameof(Status.Id) + "}", OrderByType = "asc")]
 	public int StatusId { get; set; }
+
+	[Display(Name = "Mail Preference")]
+	[SelectListEnum]
+	public MailPreference MailPreference { get; set; }
 }
 ```
 #### View Example
@@ -123,6 +137,9 @@ public class Customer
 	<br />
 	<label asp-for="StatusId"></label>
 	<select asp-for="StatusId"></select>
+	<br />
+	<label asp-for="MailPreference"></label>
+	<select asp-for="MailPreference"></select>
 	<br />
 	<button type="submit">Add/Update</button>
 </form>
@@ -173,14 +190,15 @@ public class SelectListCustomAttribute : SelectListAttribute
 
 ## Attributes
 
-| Attribute                       | Description                                                                        |
-|:--------------------------------|:-----------------------------------------------------------------------------------|
-| SelectListAttribute             | Base class for extension                                                           |
-| SelectListOptionsAttribute      | Specify Options                                                                    |
-| SelectListDbAttribute           | Specify DbContext and ModelType                                                    |
-| SelectListDbWhereEqualsAttribute| Specify DbContext Where Property Equals Clause                                     |
-| SelectListFileAttribute         | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
-| SelectListFolderAttribute       | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
+| Attribute                        | Description                                                                        |
+|:---------------------------------|:-----------------------------------------------------------------------------------|
+| SelectListAttribute              | Base class for extension                                                           |
+| SelectListOptionsAttribute       | Specify Options                                                                    |
+| SelectListDbAttribute            | Specify DbContext and ModelType                                                    |
+| SelectListDbWhereEqualsAttribute | Specify DbContext Where Property Equals Clause                                     |
+| SelectListEnumAttribute          | Automatically calls Html.GetEnumSelectList()                                       |
+| SelectListFileAttribute          | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
+| SelectListFolderAttribute        | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
 
 
 ## Authors

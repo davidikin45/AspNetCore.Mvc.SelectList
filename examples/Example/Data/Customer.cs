@@ -47,5 +47,9 @@ namespace Example.Data
         [Display(Name = "Status")]
         [SelectListDb(typeof(AppDbContext), typeof(Status), "{" + nameof(Status.Description) + "} - {" + nameof(Status.Id) + "}", OrderByType = "asc")]
         public int StatusId { get; set; }
+
+        [Display(Name = "Mail Preference")]
+        [SelectListEnum]
+        public MailPreference MailPreference { get; set; }
     }
 }

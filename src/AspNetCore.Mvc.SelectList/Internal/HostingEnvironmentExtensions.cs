@@ -28,10 +28,10 @@ namespace AspNetCore.Mvc.SelectList.Internal
                 }
                 result = Path.Combine(contentRoot, result.Replace('/', '\\'));
 
-                if (!result.EndsWith(@"\") && !Path.GetFileName(result).Contains("."))
-                {
-                    result = result + @"\";
-                }
+                //if (!result.EndsWith(@"\") && !Path.GetFileName(result).Contains("."))
+                //{
+                //    result = result + @"\";
+                //}
             }
 
             return result;
@@ -67,10 +67,10 @@ namespace AspNetCore.Mvc.SelectList.Internal
                 }
                 result = Path.Combine(wwwroot, result.Replace('/', '\\'));
 
-                if (!result.EndsWith(@"\") && !Path.GetFileName(result).Contains("."))
-                {
-                    result = result + @"\";
-                }
+                //if (!result.EndsWith(@"\") && !Path.GetFileName(result).Contains("."))
+                //{
+                //    result = result + @"\";
+                //}
             }
 
             return result;

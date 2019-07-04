@@ -33,11 +33,11 @@ namespace Example.Data
         public string SubscriptionId3 { get; set; }
 
         [Display(Name = "File")]
-        [SelectListFile("~/files/")]
+        [SelectListFile("files")]
         public string File { get; set; }
 
         [Display(Name = "Folder")]
-        [SelectListFolder("~/files/")]
+        [SelectListFolder("files")]
         public string Folder { get; set; }
 
         [Display(Name = "File2")]

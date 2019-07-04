@@ -31,22 +31,32 @@ namespace AspNetCore.Mvc.SelectList
         public string SearchPattern { get; set; } = "*";
 
         public bool RemoveSearchPathFromText { get; set; } = true;
-        public bool RemoveSearchPathFromValue { get; set; } 
+        public bool RootRelativeValue { get; set; } = true;
 
         protected async override Task<IEnumerable<SelectListItem>> GetSelectListItemsAsync(SelectListContext context)
         {
             var dataValueField = nameof(FileInfo.FullName);
+
+            if (!Path.EndsWith(@"\"))
+            {
+                Path = Path + @"\";
+            }
 
             var hostingEnvironment = context.HttpContext.RequestServices.GetRequiredService<IHostingEnvironment>();
             var mappedWwwPath = hostingEnvironment.MapWwwPath(Path);
             var mappedContentPath = hostingEnvironment.MapContentPath(Path);
 
             var searchPath = Path;
+            var root = "";
             if (mappedWwwPath != mappedContentPath)
             {
                 searchPath = mappedContentPath;
+                root = hostingEnvironment.ContentRootPath + @"\";
                 if (Directory.Exists(mappedWwwPath))
+                {
                     searchPath = mappedWwwPath;
+                    root = hostingEnvironment.WebRootPath + @"\";
+                }
             }
 
             var repository = _fileSystemGenericRepositoryFactory.CreateFileRepositoryReadOnly(default(CancellationToken), searchPath, IncludeSubDirectories, SearchPattern);
@@ -62,7 +72,7 @@ namespace AspNetCore.Mvc.SelectList
                     Model = item,
                     Html = html,
                     Text = RemoveSearchPathFromText ? context.Eval(html, item, DataTextFieldExpression).Replace(searchPath, "") : context.Eval(html, item, DataTextFieldExpression),
-                    Value = RemoveSearchPathFromText ? context.Eval(html, item, dataValueField).Replace(searchPath, "") : context.Eval(html, item, dataValueField),
+                    Value = RootRelativeValue ? context.Eval(html, item, dataValueField).Replace(root, "") : context.Eval(html, item, dataValueField),
                 });
             }
 

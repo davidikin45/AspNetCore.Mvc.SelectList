@@ -51,5 +51,9 @@ namespace Example.Data
         [Display(Name = "Mail Preference")]
         [SelectListEnum]
         public MailPreference MailPreference { get; set; }
+
+        [Display(Name = "Country")]
+        [SelectListCountry]
+        public string CountryCode { get; set; }
     }
 }

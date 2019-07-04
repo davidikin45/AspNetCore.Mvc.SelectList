@@ -1,4 +1,5 @@
 ﻿using Example.Data;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -21,7 +22,7 @@ namespace Example.Controllers
         public IActionResult Edit()
         {
             //Override attribute select list
-            //ViewBag.File = new List<SelectListItem>() { };
+            //ViewBag.File = new List<SelectListItem>() { new SelectListItem("Côte d’Ivoire", "Côte d’Ivoire") };
 
             return View("Edit", _db.Customers.Find(_customerId));
         }

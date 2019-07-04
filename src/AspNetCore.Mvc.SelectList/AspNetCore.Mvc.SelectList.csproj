@@ -10,9 +10,17 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>ASP.NET Core SelectListItem</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.8</Version>
-    <FileVersion>1.0.8.0</FileVersion>
-    <AssemblyVersion>1.0.8.0</AssemblyVersion>
+    <Version>1.0.9</Version>
+    <FileVersion>1.0.9.0</FileVersion>
+    <AssemblyVersion>1.0.9.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

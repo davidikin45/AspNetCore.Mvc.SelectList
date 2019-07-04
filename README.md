@@ -103,6 +103,10 @@ public class Customer
 	[Display(Name = "Mail Preference")]
 	[SelectListEnum]
 	public MailPreference MailPreference { get; set; }
+
+	[Display(Name = "Country")]
+	[SelectListCountry]
+	public string CountryCode { get; set; }
 }
 ```
 #### View Example
@@ -140,6 +144,9 @@ public class Customer
 	<br />
 	<label asp-for="MailPreference"></label>
 	<select asp-for="MailPreference"></select>
+	<br />
+	<label asp-for="CountryCode"></label>
+	<select asp-for="CountryCode"></select>
 	<br />
 	<button type="submit">Add/Update</button>
 </form>
@@ -199,7 +206,7 @@ public class SelectListCustomAttribute : SelectListAttribute
 | SelectListEnumAttribute          | Automatically calls Html.GetEnumSelectList()                                       |
 | SelectListFileAttribute          | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
 | SelectListFolderAttribute        | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
-
+| SelectListCountryAttribute       | Lists Countries                                                                    |
 
 ## Authors
 

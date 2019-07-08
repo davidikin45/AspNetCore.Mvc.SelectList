@@ -11,6 +11,8 @@ Features:
 4. Ability to define additional select lists by specifying selectListId.
 5. Ability to extend by inheriting from SelectListAttribute. Have access to IServiceProvider on the SelectListContext.
 6. Not limited to model properties. Can also be applied to types.
+7. Tag helpers for bootstrap 4 radio and checkbox lists.
+8. EF Core Value Converters for persisting lists as CSV or Json.
 
 Advantages:
 1. Keep select list logic with model, controllers slim and views for render only.
@@ -34,6 +36,9 @@ PM> Install-Package AspNetCore.Mvc.SelectList
 services.AddSelectListAttributes();
 ```
 #### Model Example
+
+![alt text](img/screenshot.png "Screenshot")
+
 ```
 public enum MailPreference
 {
@@ -63,6 +68,7 @@ public class Customer
 	[HiddenInput]
 	public Guid Id { get; set; }
 
+	[Required]
 	[Display(Name = "Name")]
 	public string Name { get; set; }
 
@@ -89,13 +95,13 @@ public class Customer
 	public string File { get; set; }
 
 	[Display(Name = "Folder")]
-	[SelectListFolder("~/files")]
+	[SelectListFolder("files")]
 	public string Folder { get; set; }
-	
+
 	[Display(Name = "File2")]
 	[SelectListFile("wwwroot")]
 	public string File2 { get; set; }
-	
+
 	[Display(Name = "Status")]
 	[SelectListDb(typeof(AppDbContext), typeof(Status), "{" + nameof(Status.Description) + "} - {" + nameof(Status.Id) + "}", OrderByType = "asc")]
 	public int StatusId { get; set; }
@@ -107,6 +113,44 @@ public class Customer
 	[Display(Name = "Country")]
 	[SelectListCountry]
 	public string CountryCode { get; set; }
+
+	[CsvDb]
+	[LimitOptionsMinMax(1,2)]
+	[Display(Name = "Checkbox List")]
+	[SelectListEnum]
+	public List<MailPreference> CheckboxValues { get; set; } = new List<MailPreference>();
+
+	[CsvDb]
+	[LimitOptionsMin(1)]
+	[Display(Name = "Checkbox Button List")]
+	[SelectListCountry]
+	public List<string> CheckboxButtonValues { get; set; } = new List<string>();
+
+	[Required]
+	[Display(Name = "Radio List")]
+	[SelectListEnum]
+	public MailPreference RadioValue { get; set; }
+
+	[Required]
+	[Display(Name = "Radio Button List")]
+	[SelectListEnum]
+	public MailPreference RadioButtonValue { get; set; }
+
+	[Display(Name = "Yes/No Radio Button List with no default")]
+	[SelectListYesNo]
+	public bool? YesNo { get; set; }
+
+	[Display(Name = "True/False Radio Button List with no default")]
+	[SelectListTrueFalse]
+	public bool? TrueFalse { get; set; }
+
+	[Display(Name = "Yes/No Radio Button List with default")]
+	[SelectListYesNo]
+	public bool YesNoDefault { get; set; }
+
+	[Display(Name = "True/False Radio Button List with default")]
+	[SelectListTrueFalse]
+	public bool TrueFalseDefault { get; set; }
 }
 ```
 #### View Example
@@ -117,40 +161,92 @@ public class Customer
 	<input asp-for="Id" />
 	<label asp-for="Name"></label>
 	<input asp-for="Name">
+	<span asp-validation-for="Name" class="text-danger"></span>
 	<br />
 	<label asp-for="Age"></label>
 	<select asp-for="Age" asp-items="@(Html.SelectListFor(model => model.Age, "List2"))"></select>
+	<span asp-validation-for="Age" class="text-danger"></span>
 	<br />
 	<label asp-for="SubscriptionId"></label>
 	<select asp-for="SubscriptionId"></select>
+	<span asp-validation-for="SubscriptionId" class="text-danger"></span>
 	<br />
 	<label asp-for="SubscriptionId2"></label>
 	<select asp-for="SubscriptionId2"></select>
+	<span asp-validation-for="SubscriptionId2" class="text-danger"></span>
 	<br />
 	<label asp-for="SubscriptionId3"></label>
 	<select asp-for="SubscriptionId3"></select>
+	<span asp-validation-for="SubscriptionId3" class="text-danger"></span>
 	<br />
 	<label asp-for="File"></label>
 	<select asp-for="File"></select>
+	<span asp-validation-for="File" class="text-danger"></span>
 	<br />
 	<label asp-for="Folder"></label>
 	<select asp-for="Folder"></select>
+	<span asp-validation-for="Folder" class="text-danger"></span>
 	<br />
 	<label asp-for="File2"></label>
 	<select asp-for="File2"></select>
+	<span asp-validation-for="File2" class="text-danger"></span>
 	<br />
 	<label asp-for="StatusId"></label>
 	<select asp-for="StatusId"></select>
+	<span asp-validation-for="StatusId" class="text-danger"></span>
 	<br />
 	<label asp-for="MailPreference"></label>
 	<select asp-for="MailPreference"></select>
+	<span asp-validation-for="MailPreference" class="text-danger"></span>
 	<br />
 	<label asp-for="CountryCode"></label>
 	<select asp-for="CountryCode"></select>
+	<span asp-validation-for="CountryCode" class="text-danger"></span>
+	<br />
+	<label asp-for="RadioValue"></label>
+	<radio-checkbox-list asp-for="RadioValue"></radio-checkbox-list>
+	<span asp-validation-for="RadioValue" class="text-danger"></span>
+	<br />
+	<label asp-for="CheckboxValues"></label>
+	<radio-checkbox-list asp-for="CheckboxValues"></radio-checkbox-list>
+	<span asp-validation-for="CheckboxValues" class="text-danger"></span>
+	<br />
+	<label asp-for="RadioButtonValue"></label>
+	<radio-checkbox-buttons asp-for="RadioButtonValue"></radio-checkbox-buttons>
+	<span asp-validation-for="RadioButtonValue" class="text-danger"></span>
+	<br />
+	<label asp-for="CheckboxButtonValues"></label>
+	<radio-checkbox-buttons asp-for="CheckboxButtonValues" class="btn btn-outline-primary mr-2 mb-2 btn-lg"></radio-checkbox-buttons>
+	<span asp-validation-for="CheckboxButtonValues" class="text-danger"></span>
+	<br />
+	<label asp-for="YesNo"></label>
+	<radio-checkbox-buttons asp-for="YesNo"></radio-checkbox-buttons>
+	<span asp-validation-for="YesNo" class="text-danger"></span>
+	<br />
+	<label asp-for="TrueFalse"></label>
+	<radio-checkbox-buttons asp-for="TrueFalse"></radio-checkbox-buttons>
+	<span asp-validation-for="TrueFalse" class="text-danger"></span>
+	<br />
+	<label asp-for="YesNoDefault"></label>
+	<radio-checkbox-buttons asp-for="YesNoDefault"></radio-checkbox-buttons>
+	<span asp-validation-for="YesNoDefault" class="text-danger"></span>
+	<br />
+	<label asp-for="TrueFalseDefault"></label>
+	<radio-checkbox-buttons asp-for="TrueFalseDefault"></radio-checkbox-buttons>
+	<span asp-validation-for="TrueFalseDefault" class="text-danger"></span>
 	<br />
 	<button type="submit">Add/Update</button>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
 ```
+
+```
+@addTagHelper *, AspNetCore.Mvc.SelectList
+```
+
 #### Get List
 ```
 @foreach (var item in await Html.SelectListForModelTypeAsync<Customer>())
@@ -195,7 +291,7 @@ public class SelectListCustomAttribute : SelectListAttribute
 }
 ```
 
-## Attributes
+## Select List Attributes
 
 | Attribute                        | Description                                                                        |
 |:---------------------------------|:-----------------------------------------------------------------------------------|
@@ -207,6 +303,38 @@ public class SelectListCustomAttribute : SelectListAttribute
 | SelectListFileAttribute          | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
 | SelectListFolderAttribute        | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
 | SelectListCountryAttribute       | Lists Countries                                                                    |
+| SelectListTrueFalseAttribute     | True and False options binding to boolean or boolean?                              |
+| SelectListYesNoAttribute         | Yes and No options binding to boolean or boolean?                                  |
+
+## Tag Helpers
+| TagHelper              | Description                                                                                              |
+|:-----------------------|:---------------------------------------------------------------------------------------------------------|
+| radio-checkbox-list    | Outputs radio or checkbox list based on model property type.                                             |
+| radio-checkbox-buttons | Outputs radio or checkbox list buttons based on model property type. class attribute styles the buttons. |
+
+## Db Converter Attributes
+```
+public class AppDbContext : DbContext
+{
+	public AppDbContext(DbContextOptions<AppDbContext> options)
+		: base(options)
+	{
+		
+	}
+
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		modelBuilder.AddCsvValues();
+		modelBuilder.AddJsonValues();
+	}
+}
+```
+
+| Attribute | Description                                 |
+|:----------|:--------------------------------------------|
+| CsvDb     | Saves Array, List, Collections to Db as Csv |
+| JsonDb    | Saves Object to Db as Json                  |
+
 
 ## Authors
 

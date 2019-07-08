@@ -1,6 +1,7 @@
 ﻿using AspNetCore.Mvc.SelectList;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Example.Data
@@ -11,6 +12,7 @@ namespace Example.Data
         [HiddenInput]
         public Guid Id { get; set; }
 
+        [Required]
         [Display(Name = "Name")]
         public string Name { get; set; }
 
@@ -55,5 +57,43 @@ namespace Example.Data
         [Display(Name = "Country")]
         [SelectListCountry]
         public string CountryCode { get; set; }
+
+        [CsvDb]
+        [LimitOptionsMinMax(1,2)]
+        [Display(Name = "Checkbox List")]
+        [SelectListEnum]
+        public List<MailPreference> CheckboxValues { get; set; } = new List<MailPreference>();
+
+        [CsvDb]
+        [LimitOptionsMin(1)]
+        [Display(Name = "Checkbox Button List")]
+        [SelectListCountry]
+        public List<string> CheckboxButtonValues { get; set; } = new List<string>();
+
+        [Required]
+        [Display(Name = "Radio List")]
+        [SelectListEnum]
+        public MailPreference RadioValue { get; set; }
+
+        [Required]
+        [Display(Name = "Radio Button List")]
+        [SelectListEnum]
+        public MailPreference RadioButtonValue { get; set; }
+
+        [Display(Name = "Yes/No Radio Button List with no default")]
+        [SelectListYesNo]
+        public bool? YesNo { get; set; }
+
+        [Display(Name = "True/False Radio Button List with no default")]
+        [SelectListTrueFalse]
+        public bool? TrueFalse { get; set; }
+
+        [Display(Name = "Yes/No Radio Button List with default")]
+        [SelectListYesNo]
+        public bool YesNoDefault { get; set; }
+
+        [Display(Name = "True/False Radio Button List with default")]
+        [SelectListTrueFalse]
+        public bool TrueFalseDefault { get; set; }
     }
 }

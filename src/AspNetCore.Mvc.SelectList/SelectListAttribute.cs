@@ -42,7 +42,7 @@ namespace AspNetCore.Mvc.SelectList
                 itemList.RemoveAll(item => !item.Selected);
             }
 
-            if (context.ModelExplorer.Metadata.IsNullableValueType || Nullable)
+            if ((context.ModelExplorer.Metadata.IsNullableValueType && Nullable) || Nullable)
             {
                 if(!context.SelectedOnly)
                 {

@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AspNetCore.Mvc.SelectList;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 
 namespace Example.Data
 {
@@ -17,6 +17,9 @@ namespace Example.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.AddCsvValues();
+            modelBuilder.AddJsonValues();
+
             modelBuilder.Entity<Subscription>().HasData(
                 new Subscription
                 {

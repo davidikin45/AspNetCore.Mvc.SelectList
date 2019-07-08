@@ -1,4 +1,5 @@
 ﻿using AspNetCore.Mvc.SelectList.Internal;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,6 +16,7 @@ namespace AspNetCore.Mvc.SelectList
 {
     public static class HtmlHelperExtensions
     {
+        #region SelectList
         public static IEnumerable<ModelSelectListItem<TModel>> SelectListForModelType<TModel>(this IHtmlHelper htmlHelper) where TModel : class, new()
         {
             return htmlHelper.SelectListForModelType<TModel>(new object[] { }, null);
@@ -170,5 +172,159 @@ namespace AspNetCore.Mvc.SelectList
 
             return selectList;
         }
+        #endregion
+
+        #region Boolean Checkbox
+        public static IHtmlContent CheckboxBooleanFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string text, object divHtmlAttributes, object inputHtmlAttributes, object labelHtmlAttributes)
+        {
+            var modelExpression = GetModelExpression(htmlHelper, expression);
+            return SelectListHtmlGenerator.GenerateCheckboxBoolean(htmlHelper.ViewContext, modelExpression.ModelExplorer, modelExpression.Name, text, null, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent CheckboxBoolean(this IHtmlHelper htmlHelper, string expression, string text, bool isChecked, object divHtmlAttributes, object inputHtmlAttributes, object labelHtmlAttributes)
+        {
+            return SelectListHtmlGenerator.GenerateCheckboxBoolean(htmlHelper.ViewContext, null, expression, text, isChecked, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        #endregion
+
+        #region Boolean Checkbox Button
+        public static IHtmlContent CheckboxBooleanButtonFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string text, object divHtmlAttributes, object inputHtmlAttributes, object labelHtmlAttributes)
+        {
+            var modelExpression = GetModelExpression(htmlHelper, expression);
+            return SelectListHtmlGenerator.GenerateCheckboxBooleanButton(htmlHelper.ViewContext, modelExpression.ModelExplorer, modelExpression.Name, text, null, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        public static IHtmlContent CheckboxBooleanButton(this IHtmlHelper htmlHelper, string expression, string text, bool isChecked, object divHtmlAttributes, object inputHtmlAttributes, object labelHtmlAttributes)
+        {
+            return SelectListHtmlGenerator.GenerateCheckboxBooleanButton(htmlHelper.ViewContext, null, expression, text, isChecked, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        #endregion
+
+        #region Value Checkbox
+        public static IHtmlContent CheckboxValueListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool inline = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            var modelExpression = GetModelExpression(htmlHelper, expression);
+            return SelectListHtmlGenerator.GenerateCheckboxValueList(htmlHelper.ViewContext, modelExpression.ModelExplorer,  modelExpression.Name, inline, items, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent CheckboxValueList(this IHtmlHelper htmlHelper, string expression, bool inline = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            return SelectListHtmlGenerator.GenerateCheckboxValueList(htmlHelper.ViewContext, null, expression, inline, items, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent CheckboxValueFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool inline, string value, string text, bool isChecked, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            var modelExpression = GetModelExpression(htmlHelper, expression);
+            return SelectListHtmlGenerator.GenerateCheckboxValue(htmlHelper.ViewContext, modelExpression.ModelExplorer, modelExpression.Name, inline, value, text, isChecked, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent CheckboxValue(this IHtmlHelper htmlHelper, string expression, bool inline, string value, string text, bool isChecked, object divHtmlAttributes, object inputHtmlAttributes, object labelHtmlAttributes)
+        {
+            return SelectListHtmlGenerator.GenerateCheckboxValue(htmlHelper.ViewContext, null, expression, inline, value, text, isChecked, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        #endregion
+
+        #region Value Checkbox Button
+        public static IHtmlContent CheckboxValueButtonListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool group, IEnumerable<SelectListItem> items = null, object spanHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            var modelExpression = GetModelExpression(htmlHelper, expression);
+            return SelectListHtmlGenerator.GenerateCheckboxValueButtonList(htmlHelper.ViewContext, modelExpression.ModelExplorer, modelExpression.Name, items, group, spanHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        public static IHtmlContent CheckboxValueButtonList(this IHtmlHelper htmlHelper, string expression, bool group, IEnumerable<SelectListItem> items, object spanHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            return SelectListHtmlGenerator.GenerateCheckboxValueButtonList(htmlHelper.ViewContext, null, expression, items, group, spanHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        public static IHtmlContent CheckboxValueButtonFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string value, string text, bool isChecked, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            var modelExpression = GetModelExpression(htmlHelper, expression);
+            return SelectListHtmlGenerator.GenerateCheckboxValueButton(htmlHelper.ViewContext, modelExpression.ModelExplorer, modelExpression.Name, value, text, isChecked, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        public static IHtmlContent CheckboxValueButton(this IHtmlHelper htmlHelper, string expression, string value, string text, bool isChecked, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            return SelectListHtmlGenerator.GenerateCheckboxValueButton(htmlHelper.ViewContext, null, expression, value, text, isChecked, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        #endregion
+
+        #region Value Radio
+        public static IHtmlContent RadioValueListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool inline = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            var modelExpression = GetModelExpression(htmlHelper, expression);
+            return SelectListHtmlGenerator.GenerateRadioValueList(htmlHelper.ViewContext, modelExpression.ModelExplorer, modelExpression.Name, inline, items, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent RadioValueList(this IHtmlHelper htmlHelper, string expression, bool inline = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            return SelectListHtmlGenerator.GenerateRadioValueList(htmlHelper.ViewContext, null, expression, inline, items, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent RadioValueFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool inline, string value, string text, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            var modelExpression = GetModelExpression(htmlHelper, expression);
+            return SelectListHtmlGenerator.GenerateRadioValue(htmlHelper.ViewContext, modelExpression.ModelExplorer, modelExpression.Name, inline, value, text, null, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        public static IHtmlContent RadioValue(this IHtmlHelper htmlHelper, string expression, bool inline, string value, string text, bool isChecked, object divHtmlAttributes, object inputHtmlAttributes, object labelHtmlAttributes)
+        {
+            return SelectListHtmlGenerator.GenerateRadioValue(htmlHelper.ViewContext, null, expression, inline, value, text, isChecked, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        #endregion
+
+        #region Value Radio Button
+        public static IHtmlContent RadioYesNoButtonListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool isChecked, bool groupRadioButtons, object divHtmlAttributes, object labelHtmlAttributes)
+        {
+            var items = new List<SelectListItem>();
+            items.Add(new SelectListItem("Yes", "true", isChecked, false));
+            items.Add(new SelectListItem("No", "false", !isChecked, false));
+
+            return htmlHelper.RadioValueButtonListFor(expression, groupRadioButtons, items, divHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent RadioYesNoButtonList(this IHtmlHelper htmlHelper, string expression, bool isChecked, bool groupRadioButtons, object divHtmlAttributes, object labelHtmlAttributes)
+        {
+            var items = new List<SelectListItem>();
+            items.Add(new SelectListItem("Yes", "true", isChecked, false));
+            items.Add(new SelectListItem("No", "false", !isChecked, false));
+
+            return htmlHelper.RadioValueButtonList(expression, groupRadioButtons, items, divHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent RadioTrueFalseButtonListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool isChecked, bool groupRadioButtons, object divHtmlAttributes, object labelHtmlAttributes)
+        {
+            var items = new List<SelectListItem>();
+            items.Add(new SelectListItem("True", "true", isChecked, false));
+            items.Add(new SelectListItem("False", "false", !isChecked, false));
+
+            return htmlHelper.RadioValueButtonListFor(expression, groupRadioButtons, items, divHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent RadioTrueFalseButtonList(this IHtmlHelper htmlHelper, string expression, bool isChecked, bool groupRadioButtons, object divHtmlAttributes, object labelHtmlAttributes)
+        {
+            var items = new List<SelectListItem>();
+            items.Add(new SelectListItem("True", "true", isChecked, false));
+            items.Add(new SelectListItem("False", "false", !isChecked, false));
+
+            return htmlHelper.RadioValueButtonList(expression, groupRadioButtons, items, divHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent RadioValueButtonListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool group = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            var modelExpression = GetModelExpression(htmlHelper, expression);
+            return SelectListHtmlGenerator.GenerateRadioValueButtonList(htmlHelper.ViewContext, modelExpression.ModelExplorer, modelExpression.Name, items, group, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent RadioValueButtonList(this IHtmlHelper htmlHelper, string expression, bool groupRadioButtons = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            return SelectListHtmlGenerator.GenerateRadioValueButtonList(htmlHelper.ViewContext, null, expression, items, groupRadioButtons, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent RadioValueButtonFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string value, string text, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            var modelExpression = GetModelExpression(htmlHelper, expression);
+            return SelectListHtmlGenerator.GenerateRadioValueButton(htmlHelper.ViewContext, modelExpression.ModelExplorer, modelExpression.Name, value, text, null, inputHtmlAttributes, labelHtmlAttributes);
+        }
+
+        public static IHtmlContent RadioValueButton(this IHtmlHelper htmlHelper, string expression, string value, string text, bool isChecked = false, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        {
+            return SelectListHtmlGenerator.GenerateRadioValueButton(htmlHelper.ViewContext, null, expression, value, text, isChecked, inputHtmlAttributes, labelHtmlAttributes);
+        }
+        #endregion
     }
 }

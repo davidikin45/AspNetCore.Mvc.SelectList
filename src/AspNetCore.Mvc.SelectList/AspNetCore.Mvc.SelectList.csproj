@@ -10,9 +10,10 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>ASP.NET Core SelectListItem</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.10</Version>
-    <FileVersion>1.0.10.0</FileVersion>
-    <AssemblyVersion>1.0.10.0</AssemblyVersion>
+    <Version>1.0.13</Version>
+    <FileVersion>1.0.13.0</FileVersion>
+    <AssemblyVersion>1.0.13.0</AssemblyVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,7 +25,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.2.4" />
   </ItemGroup>

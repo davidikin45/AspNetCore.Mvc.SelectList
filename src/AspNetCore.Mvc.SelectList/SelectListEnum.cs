@@ -20,7 +20,7 @@ namespace AspNetCore.Mvc.SelectList
 
         protected override Task<IEnumerable<SelectListItem>> GetSelectListItemsAsync(SelectListContext context)
         {
-            return Task.FromResult(context.Html.GetEnumSelectList(EnumType ?? context.ModelType));
+            return Task.FromResult(context.Html.GetEnumSelectList(EnumType ?? context.Metadata.ElementType ?? context.ModelType));
         }
     }
 }

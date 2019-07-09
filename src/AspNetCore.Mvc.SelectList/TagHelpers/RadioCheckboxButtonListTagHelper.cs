@@ -10,10 +10,10 @@ using System.Linq;
 
 namespace AspNetCore.Mvc.SelectList.TagHelpers
 {
-    [HtmlTargetElement("radio-checkbox-buttons", Attributes = ForAttributeName )]
-    [HtmlTargetElement("radio-checkbox-buttons", Attributes = ItemsAttributeName)]
-    [HtmlTargetElement("radio-checkbox-buttons", Attributes = "name")]
-    public class RadioCheckboxButtonsTagHelper : TagHelper
+    [HtmlTargetElement("radio-checkbox-button-list", Attributes = ForAttributeName )]
+    [HtmlTargetElement("radio-checkbox-button-list", Attributes = ItemsAttributeName)]
+    [HtmlTargetElement("radio-checkbox-button-list", Attributes = "name")]
+    public class RadioCheckboxButtonListTagHelper : TagHelper
     {
 
         private const string ForAttributeName = "asp-for";
@@ -25,7 +25,7 @@ namespace AspNetCore.Mvc.SelectList.TagHelpers
         /// Creates a new <see cref="SelectTagHelper"/>.
         /// </summary>
         /// <param name="generator">The <see cref="IHtmlGenerator"/>.</param>
-        public RadioCheckboxButtonsTagHelper(IHtmlGenerator generator)
+        public RadioCheckboxButtonListTagHelper(IHtmlGenerator generator)
         {
             Generator = generator;
         }
@@ -106,7 +106,7 @@ namespace AspNetCore.Mvc.SelectList.TagHelpers
             // Whether or not (not being highly unlikely) we generate anything, could update contained <option/>
             // elements. Provide selected values for <option/> tag helpers.
             var currentValues = _currentValues == null ? null : new CurrentValues(_currentValues);
-            context.Items[typeof(RadioCheckboxButtonsTagHelper)] = currentValues;
+            context.Items[typeof(RadioCheckboxButtonListTagHelper)] = currentValues;
         }
 
         /// <inheritdoc />

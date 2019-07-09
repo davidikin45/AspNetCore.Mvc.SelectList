@@ -250,7 +250,7 @@ public class Customer
 	<label asp-for="TrueFalseDefault"></label>
 	<radio-checkbox-button-list asp-for="TrueFalseDefault"></radio-checkbox-button-list>
 	<span asp-validation-for="TrueFalseDefault" class="text-danger"></span>
-    <br />
+	<br />
 	<label asp-for="Yes"></label>
 	<radio-checkbox-button-list asp-for="Yes" checkbox="true"></radio-checkbox-button-list>
 	<span asp-validation-for="Yes" class="text-danger"></span>

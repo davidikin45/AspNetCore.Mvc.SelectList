@@ -64,6 +64,9 @@ namespace AspNetCore.Mvc.SelectList.TagHelpers
         [HtmlAttributeName("multiple")]
         public bool Multiple { get; set; } = false;
 
+        [HtmlAttributeName("checkbox")]
+        public bool Checkbox { get; set; } = false;
+
         /// <summary>
         /// The name of the &lt;input&gt; element.
         /// </summary>
@@ -194,7 +197,7 @@ namespace AspNetCore.Mvc.SelectList.TagHelpers
                 };
             }
 
-            if (_allowMultiple)
+            if (_allowMultiple || Multiple || Checkbox)
             {
                 var tagBuilder = SelectListHtmlGenerator.GenerateCheckboxValueButtonList(
                 ViewContext,

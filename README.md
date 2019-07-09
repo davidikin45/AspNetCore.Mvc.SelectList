@@ -151,6 +151,22 @@ public class Customer
 	[Display(Name = "True/False Radio Button List with default")]
 	[SelectListTrueFalse]
 	public bool TrueFalseDefault { get; set; }
+
+	[Display(Name = "Yes Only")]
+	[SelectListYes]
+	public bool Yes { get; set; }
+
+	[Display(Name = "No Only")]
+	[SelectListNo]
+	public bool No { get; set; }
+
+	[Display(Name = "True Only")]
+	[SelectListTrue]
+	public bool True { get; set; }
+
+	[Display(Name = "False Only")]
+	[SelectListFalse]
+	public bool False { get; set; }
 }
 ```
 #### View Example
@@ -234,6 +250,22 @@ public class Customer
 	<label asp-for="TrueFalseDefault"></label>
 	<radio-checkbox-button-list asp-for="TrueFalseDefault"></radio-checkbox-button-list>
 	<span asp-validation-for="TrueFalseDefault" class="text-danger"></span>
+    <br />
+	<label asp-for="Yes"></label>
+	<radio-checkbox-button-list asp-for="Yes" checkbox="true"></radio-checkbox-button-list>
+	<span asp-validation-for="Yes" class="text-danger"></span>
+	<br />
+	<label asp-for="No"></label>
+	<radio-checkbox-button-list asp-for="No" checkbox="true"></radio-checkbox-button-list>
+	<span asp-validation-for="No" class="text-danger"></span>
+	<br />
+	<label asp-for="True"></label>
+	<radio-checkbox-button-list asp-for="True" checkbox="true"></radio-checkbox-button-list>
+	<span asp-validation-for="True" class="text-danger"></span>
+	<br />
+	<label asp-for="False"></label>
+	<radio-checkbox-button-list asp-for="False" checkbox="true"></radio-checkbox-button-list>
+	<span asp-validation-for="False" class="text-danger"></span>
 	<br />
 	<button type="submit">Add/Update</button>
 </form>
@@ -304,7 +336,12 @@ public class SelectListCustomAttribute : SelectListAttribute
 | SelectListFolderAttribute        | Specify physical, Content Root virtual or Web Root virtual path such as "~/files/" |
 | SelectListCountryAttribute       | Lists Countries                                                                    |
 | SelectListTrueFalseAttribute     | True and False options binding to boolean or boolean?                              |
+| SelectListTrueAttribute          | True option binding to boolean or boolean?                                         |
+| SelectListFalseAttribute         | False option binding to boolean or boolean?                                        |
 | SelectListYesNoAttribute         | Yes and No options binding to boolean or boolean?                                  |
+| SelectListYesttribute            | Yes option binding to boolean or boolean?                                          |
+| SelectListNoAttribute            | No options binding to boolean or boolean?                                          |
+
 
 ## Tag Helpers
 | TagHelper                  | Description                                                                                              |

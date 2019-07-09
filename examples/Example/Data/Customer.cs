@@ -95,5 +95,21 @@ namespace Example.Data
         [Display(Name = "True/False Radio Button List with default")]
         [SelectListTrueFalse]
         public bool TrueFalseDefault { get; set; }
+
+        [Display(Name = "Yes Only")]
+        [SelectListYes]
+        public bool Yes { get; set; }
+
+        [Display(Name = "No Only")]
+        [SelectListNo]
+        public bool No { get; set; }
+
+        [Display(Name = "True Only")]
+        [SelectListTrue]
+        public bool True { get; set; }
+
+        [Display(Name = "False Only")]
+        [SelectListFalse]
+        public bool False { get; set; }
     }
 }

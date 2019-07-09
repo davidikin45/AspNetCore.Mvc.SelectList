@@ -372,10 +372,8 @@ namespace AspNetCore.Mvc.SelectList
             }
         }
 
-        public static IHtmlContent RadioOrCheckboxList(this IHtmlHelper htmlHelper, string propertyName, bool inline = true, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
+        public static IHtmlContent RadioOrCheckboxList(this IHtmlHelper htmlHelper, string propertyName, bool inline = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
         {
-            var items = htmlHelper.SelectList(propertyName);
-
             ModelMetadata metadata = ExpressionMetadataProvider.FromStringExpression(propertyName, htmlHelper.ViewData, htmlHelper.MetadataProvider).Metadata;
 
             if (metadata.IsEnumerableType)

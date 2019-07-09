@@ -16,7 +16,8 @@ Features:
 
 Advantages:
 1. Keep select list logic with model, controllers slim and views for render only.
-2. Could be exended to expose select lists via API in a generic fashion. e.g /api/customers/lookup/{selectListId} or /api/customers/age/lookup/{selectListId}
+2. Implementing radio and checkbox lists in ASP.NET Core can be time consuming.
+3. Could be exended to expose select lists via API in a generic fashion. e.g /api/customers/lookup/{selectListId} or /api/customers/age/lookup/{selectListId}
 
 ## Installation
 

@@ -33,9 +33,8 @@ namespace Example
             .AddViewOptions(options =>
             {
                 options.HtmlHelperOptions.ClientValidationEnabled = true;
-            });
-
-           services.AddSelectListAttributes();
+            })
+            .AddMvcSelectListAttributes();
 
             services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=appdbcontext.db"));
         }

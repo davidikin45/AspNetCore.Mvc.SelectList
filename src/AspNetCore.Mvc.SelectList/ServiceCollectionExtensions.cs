@@ -6,9 +6,16 @@ namespace AspNetCore.Mvc.SelectList
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSelectListAttributes(this IServiceCollection services)
+        /// <summary>
+        /// Adds MVC select list attribute services to the application.
+        /// </summary>
+        public static IMvcBuilder AddMvcSelectListAttributes(this IMvcBuilder builder)
         {
-            return services.Decorate<IHtmlGenerator, SelectListHtmlGenerator>();
+            var services = builder.Services;
+
+            services.Decorate<IHtmlGenerator, SelectListHtmlGenerator>();
+
+            return builder;
         }
     }
 }

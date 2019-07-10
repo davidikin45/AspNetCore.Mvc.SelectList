@@ -34,7 +34,8 @@ PM> Install-Package AspNetCore.Mvc.SelectList
 ## Usage
 
 ```
-services.AddSelectListAttributes();
+services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+.AddMvcSelectListAttributes();
 ```
 #### Model Example
 

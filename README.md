@@ -221,51 +221,51 @@ public class Customer
 	<span asp-validation-for="CountryCode" class="text-danger"></span>
 	<br />
 	<label asp-for="RadioValue"></label>
-	<radio-checkbox-list asp-for="RadioValue"></radio-checkbox-list>
+	<radio-list asp-for="RadioValue"></radio-list>
 	<span asp-validation-for="RadioValue" class="text-danger"></span>
 	<br />
 	<label asp-for="CheckboxValues"></label>
-	<radio-checkbox-list asp-for="CheckboxValues"></radio-checkbox-list>
+	<checkbox-list asp-for="CheckboxValues"></checkbox-list>
 	<span asp-validation-for="CheckboxValues" class="text-danger"></span>
 	<br />
 	<label asp-for="RadioButtonValue"></label>
-	<radio-checkbox-button-list asp-for="RadioButtonValue"></radio-checkbox-button-list>
+	<radio-button-list asp-for="RadioButtonValue"></radio-button-list>
 	<span asp-validation-for="RadioButtonValue" class="text-danger"></span>
 	<br />
 	<label asp-for="CheckboxButtonValues"></label>
-	<radio-checkbox-button-list asp-for="CheckboxButtonValues" class="btn btn-outline-primary mr-2 mb-2 btn-lg"></radio-checkbox-button-list>
+	<checkbox-button-list asp-for="CheckboxButtonValues" class="btn btn-outline-primary mr-2 mb-2 btn-lg"></checkbox-button-list>
 	<span asp-validation-for="CheckboxButtonValues" class="text-danger"></span>
 	<br />
 	<label asp-for="YesNo"></label>
-	<radio-checkbox-button-list asp-for="YesNo"></radio-checkbox-button-list>
+	<radio-button-list asp-for="YesNo"></radio-button-list>
 	<span asp-validation-for="YesNo" class="text-danger"></span>
 	<br />
 	<label asp-for="TrueFalse"></label>
-	<radio-checkbox-button-list asp-for="TrueFalse"></radio-checkbox-button-list>
+	<radio-button-list asp-for="TrueFalse"></radio-button-list>
 	<span asp-validation-for="TrueFalse" class="text-danger"></span>
 	<br />
 	<label asp-for="YesNoDefault"></label>
-	<radio-checkbox-button-list asp-for="YesNoDefault"></radio-checkbox-button-list>
+	<radio-button-list asp-for="YesNoDefault"></radio-button-list>
 	<span asp-validation-for="YesNoDefault" class="text-danger"></span>
 	<br />
 	<label asp-for="TrueFalseDefault"></label>
-	<radio-checkbox-button-list asp-for="TrueFalseDefault"></radio-checkbox-button-list>
+	<radio-button-list asp-for="TrueFalseDefault"></radio-button-list>
 	<span asp-validation-for="TrueFalseDefault" class="text-danger"></span>
 	<br />
 	<label asp-for="Yes"></label>
-	<radio-checkbox-button-list asp-for="Yes" checkbox="true"></radio-checkbox-button-list>
+	<checkbox-button-list asp-for="Yes"></checkbox-button-list>
 	<span asp-validation-for="Yes" class="text-danger"></span>
 	<br />
 	<label asp-for="No"></label>
-	<radio-checkbox-button-list asp-for="No" checkbox="true"></radio-checkbox-button-list>
+	<checkbox-button-list asp-for="No"></checkbox-button-list>
 	<span asp-validation-for="No" class="text-danger"></span>
 	<br />
 	<label asp-for="True"></label>
-	<radio-checkbox-button-list asp-for="True" checkbox="true"></radio-checkbox-button-list>
+	<checkbox-button-list asp-for="True"></checkbox-button-list>
 	<span asp-validation-for="True" class="text-danger"></span>
 	<br />
 	<label asp-for="False"></label>
-	<radio-checkbox-button-list asp-for="False" checkbox="true"></radio-checkbox-button-list>
+	<checkbox-button-list asp-for="False"></checkbox-button-list>
 	<span asp-validation-for="False" class="text-danger"></span>
 	<br />
 	<button type="submit">Add/Update</button>
@@ -345,10 +345,12 @@ public class SelectListCustomAttribute : SelectListAttribute
 
 
 ## Tag Helpers
-| TagHelper                  | Description                                                                                              |
-|:---------------------------|:---------------------------------------------------------------------------------------------------------|
-| radio-checkbox-list        | Outputs radio or checkbox list based on model property type.                                             |
-| radio-checkbox-button-list | Outputs radio or checkbox list buttons based on model property type. class attribute styles the buttons. |
+| TagHelper            | Description                                                                                           |
+|:---------------------|:------------------------------------------------------------------------------------------------------|
+| radio-list           | Outputs radio list. 1 option can be selected.                                                         |
+| checkbox-list        | Outputs checkbox list. 0 or more options can be selected.                                             |
+| radio-button-list    | Outputs radio list buttons. class attribute styles the buttons. 1 option can be selected.             |
+| checkbox-button-list | Outputs checkbox list buttons. class attribute styles the buttons. 0 or more options can be selected. |
 
 
 ## Db Converter Attributes

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Microsoft.AspNetCore.Mvc.TagHelpers.Internal;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,12 +12,11 @@ using System.Linq;
 
 namespace AspNetCore.Mvc.SelectList.TagHelpers
 {
-    [HtmlTargetElement("radio-checkbox-button-list", Attributes = ForAttributeName )]
-    [HtmlTargetElement("radio-checkbox-button-list", Attributes = ItemsAttributeName)]
-    [HtmlTargetElement("radio-checkbox-button-list", Attributes = "name")]
-    public class RadioCheckboxButtonListTagHelper : TagHelper
+    [HtmlTargetElement("checkbox-list", Attributes = ForAttributeName)]
+    [HtmlTargetElement("checkbox-list", Attributes = ItemsAttributeName)]
+    [HtmlTargetElement("checkbox-list", Attributes = "name")]
+    public class CheckboxListTagHelper : TagHelper
     {
-
         private const string ForAttributeName = "asp-for";
         private const string ItemsAttributeName = "asp-items";
         private bool _allowMultiple;
@@ -25,7 +26,7 @@ namespace AspNetCore.Mvc.SelectList.TagHelpers
         /// Creates a new <see cref="SelectTagHelper"/>.
         /// </summary>
         /// <param name="generator">The <see cref="IHtmlGenerator"/>.</param>
-        public RadioCheckboxButtonListTagHelper(IHtmlGenerator generator)
+        public CheckboxListTagHelper(IHtmlGenerator generator)
         {
             Generator = generator;
         }
@@ -58,14 +59,8 @@ namespace AspNetCore.Mvc.SelectList.TagHelpers
         [HtmlAttributeName(ItemsAttributeName)]
         public IEnumerable<SelectListItem> Items { get; set; }
 
-        [HtmlAttributeName("btn-group")]
-        public bool BtnGroup { get; set; } = false;
-
-        [HtmlAttributeName("multiple")]
-        public bool Multiple { get; set; } = false;
-
-        [HtmlAttributeName("checkbox")]
-        public bool Checkbox { get; set; } = false;
+        [HtmlAttributeName("inline")]
+        public bool Inline { get; set; } = true;
 
         /// <summary>
         /// The name of the &lt;input&gt; element.
@@ -86,8 +81,12 @@ namespace AspNetCore.Mvc.SelectList.TagHelpers
 
             if (For == null)
             {
-                // Informs contained elements that they're running within a targeted <select/> element.
-                context.Items[typeof(SelectTagHelper)] = null;
+                var modelExplorer = ExpressionMetadataProvider.FromStringExpression(Name, ViewContext.ViewData, ViewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
+                var realModelType2 = modelExplorer.ModelType;
+                _allowMultiple = typeof(string) != realModelType2 &&
+                    typeof(IEnumerable).IsAssignableFrom(realModelType2);
+                _currentValues = Generator.GetCurrentValues(ViewContext, null, Name, _allowMultiple);
+
                 return;
             }
 
@@ -105,11 +104,6 @@ namespace AspNetCore.Mvc.SelectList.TagHelpers
             _allowMultiple = typeof(string) != realModelType &&
                 typeof(IEnumerable).IsAssignableFrom(realModelType);
             _currentValues = Generator.GetCurrentValues(ViewContext, For.ModelExplorer, For.Name, _allowMultiple);
-
-            // Whether or not (not being highly unlikely) we generate anything, could update contained <option/>
-            // elements. Provide selected values for <option/> tag helpers.
-            var currentValues = _currentValues == null ? null : new CurrentValues(_currentValues);
-            context.Items[typeof(RadioCheckboxButtonListTagHelper)] = currentValues;
         }
 
         /// <inheritdoc />
@@ -149,38 +143,18 @@ namespace AspNetCore.Mvc.SelectList.TagHelpers
 
             if (For == null)
             {
-                if (_allowMultiple || Multiple)
-                {
-                    var tagBuilder = SelectListHtmlGenerator.GenerateCheckboxValueButtonList(
-                    ViewContext,
-                    null,
-                    Name,
-                    selectList: items,
-                    currentValues: _currentValues,
-                    group: BtnGroup,
-                    spanHtmlAttributes: null,
-                    inputHtmlAttributes: null,
-                    labelHtmlAttributes: labelAttributes
-                    );
+                var tagBuilder = SelectListHtmlGenerator.GenerateCheckboxValueList(
+                   ViewContext,
+                   null,
+                   expression: Name,
+                   inline: Inline,
+                   selectList: items,
+                   currentValues: _currentValues,
+                   null,
+                   inputHtmlAttributes: null,
+                   labelAttributes);
 
-                    output.Content.SetHtmlContent(tagBuilder);
-                }
-                else
-                {
-                    var tagBuilder = SelectListHtmlGenerator.GenerateRadioValueButtonList(
-                    ViewContext,
-                    null,
-                    Name,
-                    selectList: items,
-                    group: BtnGroup,
-                    currentValues: _currentValues,
-                    divHtmlAttributes: null,
-                    inputHtmlAttributes: null,
-                    labelHtmlAttributes: labelAttributes
-                    );
-
-                    output.Content.SetHtmlContent(tagBuilder);
-                }
+                output.Content.SetHtmlContent(tagBuilder);
 
                 return;
             }
@@ -197,38 +171,18 @@ namespace AspNetCore.Mvc.SelectList.TagHelpers
                 };
             }
 
-            if (_allowMultiple || Multiple || Checkbox)
-            {
-                var tagBuilder = SelectListHtmlGenerator.GenerateCheckboxValueButtonList(
+            var tagBuilder2 = SelectListHtmlGenerator.GenerateCheckboxValueList(
                 ViewContext,
                 For.ModelExplorer,
                 expression: For.Name,
+                inline: Inline,
                 selectList: items,
                 currentValues: _currentValues,
-                group: BtnGroup,
-                spanHtmlAttributes: null,
-                inputHtmlAttributes : inputAttributes,
-                labelHtmlAttributes: labelAttributes
-                );
+                null,
+                inputAttributes,
+                labelAttributes);
 
-                output.Content.SetHtmlContent(tagBuilder);
-            }
-            else
-            {
-                var tagBuilder = SelectListHtmlGenerator.GenerateRadioValueButtonList(
-                ViewContext,
-                For.ModelExplorer,
-                expression: For.Name,
-                selectList: items,
-                group: BtnGroup,
-                currentValues: _currentValues,
-                divHtmlAttributes: null,
-                inputHtmlAttributes: inputAttributes,
-                labelHtmlAttributes: labelAttributes
-                );
-
-                output.Content.SetHtmlContent(tagBuilder);
-            }
+            output.Content.SetHtmlContent(tagBuilder2);
         }
     }
 }

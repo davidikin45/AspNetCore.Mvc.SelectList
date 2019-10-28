@@ -113,7 +113,7 @@ namespace AspNetCore.Mvc.SelectList
 
         private static async Task<IEnumerable<SelectListItem>> GenerateSelectListAsync(IHtmlHelper htmlHelper, ModelExplorer modelExplorer, string expression, string selectListId = null, bool selectedOnly = false)
         {
-            var modelExplorerToExtractAttribute = ExpressionMetadataProvider.FromStringExpression(expression, htmlHelper.ViewData, htmlHelper.MetadataProvider);
+            var modelExplorerToExtractAttribute = Internal.ExpressionMetadataProvider.FromStringExpression(expression, htmlHelper.ViewData, htmlHelper.MetadataProvider);
 
             if (!(modelExplorerToExtractAttribute.Metadata is DefaultModelMetadata defaultModelMetadata))
                 return null;
@@ -344,7 +344,7 @@ namespace AspNetCore.Mvc.SelectList
 
         public static IHtmlContent DropDownListOrListBox(this IHtmlHelper htmlHelper, string propertyName, IEnumerable<SelectListItem> items = null, object htmlAttributes = null)
         {
-            ModelMetadata metadata = ExpressionMetadataProvider.FromStringExpression(propertyName, htmlHelper.ViewData, htmlHelper.MetadataProvider).Metadata;
+            ModelMetadata metadata = Internal.ExpressionMetadataProvider.FromStringExpression(propertyName, htmlHelper.ViewData, htmlHelper.MetadataProvider).Metadata;
 
             if (metadata.IsEnumerableType)
             {
@@ -374,7 +374,7 @@ namespace AspNetCore.Mvc.SelectList
 
         public static IHtmlContent RadioOrCheckboxList(this IHtmlHelper htmlHelper, string propertyName, bool inline = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
         {
-            ModelMetadata metadata = ExpressionMetadataProvider.FromStringExpression(propertyName, htmlHelper.ViewData, htmlHelper.MetadataProvider).Metadata;
+            ModelMetadata metadata = Internal.ExpressionMetadataProvider.FromStringExpression(propertyName, htmlHelper.ViewData, htmlHelper.MetadataProvider).Metadata;
 
             if (metadata.IsEnumerableType)
             {
@@ -405,7 +405,7 @@ namespace AspNetCore.Mvc.SelectList
 
         public static IHtmlContent RadioOrCheckboxButtonList(this IHtmlHelper htmlHelper, string propertyName, bool group, IEnumerable<SelectListItem> items = null, object spanHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
         {
-            ModelMetadata metadata = ExpressionMetadataProvider.FromStringExpression(propertyName, htmlHelper.ViewData, htmlHelper.MetadataProvider).Metadata;
+            ModelMetadata metadata = Internal.ExpressionMetadataProvider.FromStringExpression(propertyName, htmlHelper.ViewData, htmlHelper.MetadataProvider).Metadata;
 
             if (metadata.IsEnumerableType)
             {

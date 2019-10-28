@@ -119,7 +119,7 @@ namespace AspNetCore.Mvc.SelectList
             var metadataProvider = viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>();
             var validationAttributeProvider = viewContext.HttpContext.RequestServices.GetRequiredService<ValidationHtmlAttributeProvider>();
 
-            modelExplorer = modelExplorer ?? ExpressionMetadataProvider.FromStringExpression(
+            modelExplorer = modelExplorer ?? Internal.ExpressionMetadataProvider.FromStringExpression(
                 expression,
                 viewContext.ViewData,
                 metadataProvider);
@@ -611,7 +611,7 @@ namespace AspNetCore.Mvc.SelectList
 
                 if (selectFromAttribute)
                 {
-                    modelExplorer = modelExplorer ?? ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
+                    modelExplorer = modelExplorer ?? Internal.ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
                     var selectListItems = GetSelectListItems(viewContext, modelExplorer, expression, currentValues);
                     if (selectListItems != null)
                     {

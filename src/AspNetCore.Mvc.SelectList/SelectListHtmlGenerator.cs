@@ -584,6 +584,8 @@ namespace AspNetCore.Mvc.SelectList
 
         public TagBuilder GenerateSelect(ViewContext viewContext, ModelExplorer modelExplorer, string optionLabel, string expression, IEnumerable<SelectListItem> selectList, bool allowMultiple, object htmlAttributes)
         {
+            selectList = GetSelectListItems(viewContext, modelExplorer, expression, selectList, null);
+
             return _htmlGenerator.GenerateSelect(viewContext, modelExplorer, optionLabel, expression, selectList, allowMultiple, htmlAttributes);
         }
 

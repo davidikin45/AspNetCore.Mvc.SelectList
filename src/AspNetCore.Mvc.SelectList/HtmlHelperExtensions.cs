@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -87,8 +86,12 @@ namespace AspNetCore.Mvc.SelectList
 
         private static ModelExpression GetModelExpression<TModel, TResult>(IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression)
         {
-            var modelExpressionProvider = new ModelExpressionProvider(htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>(),
-                htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<ExpressionTextCache>());
+#if NETCOREAPP3_0
+            var modelExpressionProvider = new ModelExpressionProvider(htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
+#else
+                        var modelExpressionProvider = new ModelExpressionProvider(htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>(),
+                htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<Microsoft.AspNetCore.Mvc.ViewFeatures.Internal.ExpressionTextCache>());
+#endif
             return modelExpressionProvider.CreateModelExpression(htmlHelper.ViewData, expression);
         }
 
@@ -172,9 +175,9 @@ namespace AspNetCore.Mvc.SelectList
 
             return selectList;
         }
-        #endregion
+#endregion
 
-        #region Boolean Checkbox
+#region Boolean Checkbox
         public static IHtmlContent CheckboxBooleanFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string text, object divHtmlAttributes, object inputHtmlAttributes, object labelHtmlAttributes)
         {
             var modelExpression = GetModelExpression(htmlHelper, expression);
@@ -185,9 +188,9 @@ namespace AspNetCore.Mvc.SelectList
         {
             return SelectListHtmlGenerator.GenerateCheckboxBoolean(htmlHelper.ViewContext, null, expression, text, isChecked, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
         }
-        #endregion
+#endregion
 
-        #region Boolean Checkbox Button
+#region Boolean Checkbox Button
         public static IHtmlContent CheckboxBooleanButtonFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, string text, object divHtmlAttributes, object inputHtmlAttributes, object labelHtmlAttributes)
         {
             var modelExpression = GetModelExpression(htmlHelper, expression);
@@ -197,9 +200,9 @@ namespace AspNetCore.Mvc.SelectList
         {
             return SelectListHtmlGenerator.GenerateCheckboxBooleanButton(htmlHelper.ViewContext, null, expression, text, isChecked, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
         }
-        #endregion
+#endregion
 
-        #region Checkbox List
+#region Checkbox List
         public static IHtmlContent CheckboxListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool inline = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
         {
             var modelExpression = GetModelExpression(htmlHelper, expression);
@@ -221,9 +224,9 @@ namespace AspNetCore.Mvc.SelectList
         {
             return SelectListHtmlGenerator.GenerateCheckboxValue(htmlHelper.ViewContext, null, expression, inline, value, text, isChecked, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
         }
-        #endregion
+#endregion
 
-        #region Checkbox Button List
+#region Checkbox Button List
         public static IHtmlContent CheckboxButtonListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool group, IEnumerable<SelectListItem> items = null, object spanHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
         {
             var modelExpression = GetModelExpression(htmlHelper, expression);
@@ -242,9 +245,9 @@ namespace AspNetCore.Mvc.SelectList
         {
             return SelectListHtmlGenerator.GenerateCheckboxValueButton(htmlHelper.ViewContext, null, expression, value, text, isChecked, inputHtmlAttributes, labelHtmlAttributes);
         }
-        #endregion
+#endregion
 
-        #region Radio List
+#region Radio List
         public static IHtmlContent RadioListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool inline = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
         {
             var modelExpression = GetModelExpression(htmlHelper, expression);
@@ -265,9 +268,9 @@ namespace AspNetCore.Mvc.SelectList
         {
             return SelectListHtmlGenerator.GenerateRadioValue(htmlHelper.ViewContext, null, expression, inline, value, text, isChecked, divHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
         }
-        #endregion
+#endregion
 
-        #region Radio Button List
+#region Radio Button List
         public static IHtmlContent RadioYesNoButtonListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool isChecked, bool groupRadioButtons, object divHtmlAttributes, object labelHtmlAttributes)
         {
             var items = new List<SelectListItem>();
@@ -325,9 +328,9 @@ namespace AspNetCore.Mvc.SelectList
         {
             return SelectListHtmlGenerator.GenerateRadioValueButton(htmlHelper.ViewContext, null, expression, value, text, isChecked, inputHtmlAttributes, labelHtmlAttributes);
         }
-        #endregion
+#endregion
 
-        #region Dropdown or Listbox
+#region Dropdown or Listbox
         public static IHtmlContent DropDownListOrListBoxFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, IEnumerable<SelectListItem> items = null, object htmlAttributes = null)
         {
             var modelExpression = GetModelExpression(htmlHelper, expression);
@@ -355,9 +358,9 @@ namespace AspNetCore.Mvc.SelectList
                 return htmlHelper.DropDownList(propertyName, items, htmlAttributes);
             }
         }
-        #endregion
+#endregion
 
-        #region Radio List or Checkbox List
+#region Radio List or Checkbox List
         public static IHtmlContent RadioOrCheckboxListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool inline = true, IEnumerable<SelectListItem> items = null, object divHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
         {
             var modelExpression = GetModelExpression(htmlHelper, expression);
@@ -386,9 +389,9 @@ namespace AspNetCore.Mvc.SelectList
             }
         }
 
-        #endregion
+#endregion
 
-        #region  Radio Button List or Checkbox Button List
+#region  Radio Button List or Checkbox Button List
         public static IHtmlContent RadioOrCheckboxButtonListFor<TModel, TResult>(this IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression, bool group, IEnumerable<SelectListItem> items = null, object spanHtmlAttributes = null, object inputHtmlAttributes = null, object labelHtmlAttributes = null)
         {
             var modelExpression = GetModelExpression(htmlHelper, expression);
@@ -416,6 +419,6 @@ namespace AspNetCore.Mvc.SelectList
                 return htmlHelper.RadioButtonList(propertyName, group, items, spanHtmlAttributes, inputHtmlAttributes, labelHtmlAttributes);
             }
         }
-        #endregion
+#endregion
     }
 }

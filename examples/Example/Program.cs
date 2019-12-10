@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
 namespace Example
@@ -10,14 +11,14 @@ namespace Example
     {
         public async static Task Main(string[] args)
         {
-            var webHost = CreateWebHostBuilder(args).Build();
+            var webHost = CreateHostBuilder(args).Build();
 
             using (var scope = webHost.Services.CreateScope())
             {
                 var serviceProvider = scope.ServiceProvider;
 
-                var hostingEnvironment = serviceProvider.GetRequiredService<IHostingEnvironment>();
-                var appLifetime = serviceProvider.GetRequiredService<IApplicationLifetime>();
+                var hostingEnvironment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
+                var appLifetime = serviceProvider.GetRequiredService<IHostApplicationLifetime>();
 
                 if (hostingEnvironment.IsDevelopment())
                 {
@@ -30,8 +31,11 @@ namespace Example
 
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder => {
+                webBuilder.UseStartup<Startup>();
+            });
+     
     }
 }

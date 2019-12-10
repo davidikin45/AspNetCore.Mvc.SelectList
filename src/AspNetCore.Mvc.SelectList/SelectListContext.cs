@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AspNetCore.Mvc.SelectList.Internal;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+#if NETCOREAPP3_0
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers;
+#else
 using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
+#endif
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -44,13 +49,14 @@ namespace AspNetCore.Mvc.SelectList
 
             CurrentValues = currentValues;
             //IdFor
-            ModelExplorer = modelExplorer ?? ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
+            ModelExplorer = modelExplorer ?? Internal.ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
             Html = html ?? CreateHtmlHelper(viewContext);
             SelectedOnly = selectedOnly;
         }
 
         private static IHtmlHelper CreateHtmlHelper(ViewContext viewContext)
         {
+#if NETCOREAPP3_0
             var helper = new HtmlHelper(
                 viewContext.HttpContext.RequestServices.GetRequiredService<IHtmlGenerator>(),
                 viewContext.HttpContext.RequestServices.GetRequiredService<ICompositeViewEngine>(),
@@ -58,7 +64,15 @@ namespace AspNetCore.Mvc.SelectList
                 viewContext.HttpContext.RequestServices.GetRequiredService<IViewBufferScope>(),
                 viewContext.HttpContext.RequestServices.GetRequiredService<HtmlEncoder>(),
                 viewContext.HttpContext.RequestServices.GetRequiredService<UrlEncoder>());
-
+#else
+                    var helper = new HtmlHelper(
+                viewContext.HttpContext.RequestServices.GetRequiredService<IHtmlGenerator>(),
+                viewContext.HttpContext.RequestServices.GetRequiredService<ICompositeViewEngine>(),
+                viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>(),
+                viewContext.HttpContext.RequestServices.GetRequiredService<IViewBufferScope>(),
+                viewContext.HttpContext.RequestServices.GetRequiredService<HtmlEncoder>(),
+                viewContext.HttpContext.RequestServices.GetRequiredService<UrlEncoder>());
+#endif
             helper.Contextualize(viewContext);
 
             return helper;
@@ -71,7 +85,7 @@ namespace AspNetCore.Mvc.SelectList
            string expression)
         {
             var htmlGenerator = viewContext.HttpContext.RequestServices.GetRequiredService<IHtmlGenerator>();
-            var modelExplorerForMetadata = modelExplorer ?? ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
+            var modelExplorerForMetadata = modelExplorer ?? Internal.ExpressionMetadataProvider.FromStringExpression(expression, viewContext.ViewData, viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
 
             if(modelExplorerForMetadata.Metadata.IsEnumerableType)
             {

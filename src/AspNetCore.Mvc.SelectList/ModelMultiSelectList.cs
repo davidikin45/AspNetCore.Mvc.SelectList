@@ -140,14 +140,10 @@ namespace AspNetCore.Mvc.SelectList
 
         private IList<ModelSelectListItem> GetListItemsWithValueField()
         {
-            var selectedValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var selectedValues = new HashSet<object>();
             if (SelectedValues != null)
             {
-                foreach (var value in SelectedValues)
-                {
-                    var stringValue = Convert.ToString(value, CultureInfo.CurrentCulture);
-                    selectedValues.Add(stringValue);
-                }
+                selectedValues.UnionWith(SelectedValues.Cast<object>());
             }
 
             var listItems = new List<ModelSelectListItem>();

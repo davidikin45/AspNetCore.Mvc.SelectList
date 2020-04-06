@@ -4,11 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-#if NETCOREAPP3_0
 using Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers;
-#else
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
-#endif
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -56,7 +52,7 @@ namespace AspNetCore.Mvc.SelectList
 
         private static IHtmlHelper CreateHtmlHelper(ViewContext viewContext)
         {
-#if NETCOREAPP3_0
+
             var helper = new HtmlHelper(
                 viewContext.HttpContext.RequestServices.GetRequiredService<IHtmlGenerator>(),
                 viewContext.HttpContext.RequestServices.GetRequiredService<ICompositeViewEngine>(),
@@ -64,15 +60,16 @@ namespace AspNetCore.Mvc.SelectList
                 viewContext.HttpContext.RequestServices.GetRequiredService<IViewBufferScope>(),
                 viewContext.HttpContext.RequestServices.GetRequiredService<HtmlEncoder>(),
                 viewContext.HttpContext.RequestServices.GetRequiredService<UrlEncoder>());
-#else
-                    var helper = new HtmlHelper(
-                viewContext.HttpContext.RequestServices.GetRequiredService<IHtmlGenerator>(),
-                viewContext.HttpContext.RequestServices.GetRequiredService<ICompositeViewEngine>(),
-                viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>(),
-                viewContext.HttpContext.RequestServices.GetRequiredService<IViewBufferScope>(),
-                viewContext.HttpContext.RequestServices.GetRequiredService<HtmlEncoder>(),
-                viewContext.HttpContext.RequestServices.GetRequiredService<UrlEncoder>());
-#endif
+
+                //.NET Core 2.2
+                //    var helper = new HtmlHelper(
+                //viewContext.HttpContext.RequestServices.GetRequiredService<IHtmlGenerator>(),
+                //viewContext.HttpContext.RequestServices.GetRequiredService<ICompositeViewEngine>(),
+                //viewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>(),
+                //viewContext.HttpContext.RequestServices.GetRequiredService<IViewBufferScope>(),
+                //viewContext.HttpContext.RequestServices.GetRequiredService<HtmlEncoder>(),
+                //viewContext.HttpContext.RequestServices.GetRequiredService<UrlEncoder>());
+
             helper.Contextualize(viewContext);
 
             return helper;

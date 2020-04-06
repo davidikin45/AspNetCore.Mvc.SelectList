@@ -86,12 +86,13 @@ namespace AspNetCore.Mvc.SelectList
 
         private static ModelExpression GetModelExpression<TModel, TResult>(IHtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TResult>> expression)
         {
-#if NETCOREAPP3_0
+
             var modelExpressionProvider = new ModelExpressionProvider(htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>());
-#else
-                        var modelExpressionProvider = new ModelExpressionProvider(htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>(),
-                htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<Microsoft.AspNetCore.Mvc.ViewFeatures.Internal.ExpressionTextCache>());
-#endif
+
+            //.NET Core 2.2
+            //var modelExpressionProvider = new ModelExpressionProvider(htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<IModelMetadataProvider>(),
+            //htmlHelper.ViewContext.HttpContext.RequestServices.GetRequiredService<Microsoft.AspNetCore.Mvc.ViewFeatures.Internal.ExpressionTextCache>());
+
             return modelExpressionProvider.CreateModelExpression(htmlHelper.ViewData, expression);
         }
 

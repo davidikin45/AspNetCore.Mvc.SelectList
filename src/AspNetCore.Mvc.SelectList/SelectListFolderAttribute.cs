@@ -73,7 +73,7 @@ namespace AspNetCore.Mvc.SelectList
                     Model = item,
                     Html = html,
                     Text = RemoveSearchPathFromText ? context.Eval(html, item, DataTextFieldExpression).Replace(searchPath, "") : context.Eval(html, item, DataTextFieldExpression),
-                    Value = RootRelativeValue ? context.Eval(html, item, dataValueField).Replace(root, "") : context.Eval(html, item, dataValueField),
+                    Value = RootRelativeValue ? context.Eval(html, item, dataValueField).Replace(root, "").Replace(@"\", @"/") : context.Eval(html, item, dataValueField),
                 });
             }
 

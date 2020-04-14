@@ -48,12 +48,14 @@ namespace AspNetCore.Mvc.SelectList
 
             var searchPath = Path;
             var root = "";
+            var webFolder = false;
             if (mappedWwwPath != mappedContentPath)
             {
                 searchPath = mappedContentPath;
                 root = hostingEnvironment.ContentRootPath + @"\";
                 if (Directory.Exists(mappedWwwPath))
                 {
+                    webFolder = true;
                     searchPath = mappedWwwPath;
                     root = hostingEnvironment.WebRootPath + @"\";
                 }
@@ -72,7 +74,7 @@ namespace AspNetCore.Mvc.SelectList
                     Model = item,
                     Html = html,
                     Text = RemoveSearchPathFromText ? context.Eval(html, item, DataTextFieldExpression).Replace(searchPath, "") : context.Eval(html, item, DataTextFieldExpression),
-                    Value = RootRelativeValue ? context.Eval(html, item, dataValueField).Replace(root, "") : context.Eval(html, item, dataValueField),
+                    Value = RootRelativeValue ? webFolder ? context.Eval(html, item, dataValueField).Replace(root, "").Replace(@"\", @"/") : context.Eval(html, item, dataValueField).Replace(root, "") : context.Eval(html, item, dataValueField),
                 });
             }
 

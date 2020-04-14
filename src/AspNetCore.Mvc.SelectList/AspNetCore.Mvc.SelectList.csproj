@@ -10,9 +10,9 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>ASP.NET Core SelectListItem</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.13</Version>
-    <FileVersion>1.1.13.0</FileVersion>
-    <AssemblyVersion>1.1.13.0</AssemblyVersion>
+    <Version>1.1.14</Version>
+    <FileVersion>1.1.14.0</FileVersion>
+    <AssemblyVersion>1.1.14.0</AssemblyVersion>
     <LangVersion>latest</LangVersion>
     <ApplicationIcon />
     <OutputType>Library</OutputType>

@@ -49,7 +49,7 @@ namespace AspNetCore.Mvc.SelectList
 
         public bool EnableChangeTracking { get; set; } = false;
 
-        private static MethodInfo _dbContextSetMethod = typeof(DbContext).GetMethod("Set");
+        private static MethodInfo _dbContextSetMethod = typeof(DbContext).GetMethods().Where(m => m.Name == "Set").First();
         private static MethodInfo _dbContextWhereClauseMethod = typeof(LamdaHelper).GetMethod(nameof(LamdaHelper.Where));
         private static MethodInfo _dbContextOrderByMethod = typeof(DbContextHelper).GetMethod(nameof(DbContextHelper.QueryableOrderBy));
 
